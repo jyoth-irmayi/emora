@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import MoodQuestion, MoodOption
 
-# Register your models here.
+admin.site.register(MoodQuestion)
+admin.site.register(MoodOption)

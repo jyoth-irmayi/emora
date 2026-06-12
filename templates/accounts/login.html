@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+.login-container{
+    min-height:85vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 20px;
+    background:#f8f9fc;
+}
+
+.login-card{
+    width:100%;
+    max-width:450px;
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.login-header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.login-header h1{
+    font-size:2.2rem;
+    color:#222;
+    margin-bottom:10px;
+}
+
+.login-header p{
+    color:#777;
+}
+
+.form-group{
+    margin-bottom:20px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#333;
+}
+
+.form-group input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:15px;
+    outline:none;
+}
+
+.form-group input:focus{
+    border-color:#4f46e5;
+}
+
+.remember-forgot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.remember-forgot a{
+    text-decoration:none;
+    color:#4f46e5;
+}
+
+.login-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#4f46e5;
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.login-btn:hover{
+    opacity:0.95;
+}
+
+.divider{
+    text-align:center;
+    margin:25px 0;
+    color:#888;
+}
+
+.social-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.social-btn{
+    flex:1;
+    padding:12px;
+    border:1px solid #ddd;
+    background:white;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.register-link{
+    text-align:center;
+    margin-top:25px;
+    color:#666;
+}
+
+.register-link a{
+    color:#4f46e5;
+    text-decoration:none;
+    font-weight:600;
+}
+
+</style>
+
+
+<section class="login-container">
+
+    <div class="login-card">
+
+        <div class="login-header">
+            <h1>Welcome Back</h1>
+            <p>Login to continue your journey on Emora.</p>
+        </div>
+        {% if errors %}
+        <p style="color:red;">{{errors}}</p>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" placeholder="Enter your email" name="username">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" placeholder="Enter your password" name='password'>
+            </div>
+
+            <div class="remember-forgot">
+                <label>
+                    <input type="checkbox">
+                    Remember Me
+                </label>
+
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+
+        </form>
+
+        <div class="divider">
+            OR
+        </div>
+
+        <div class="social-buttons">
+            <button class="social-btn">Google</button>
+            <button class="social-btn">GitHub</button>
+        </div>
+
+        <div class="register-link">
+            Don't have an account?
+            <a href="#">Create Account</a>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

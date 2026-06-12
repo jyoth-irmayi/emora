@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ================= WRAPPER ================= */
+
+.music-wrapper{
+    max-width:750px;
+    margin:40px auto;
+    padding:20px;
+}
+
+/* ================= HEADER ================= */
+
+.music-header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.music-header h2{
+    margin:0;
+    font-size:28px;
+}
+
+.music-header p{
+    color:#777;
+}
+
+/* ================= MOOD BANNER ================= */
+
+.mood-banner{
+    text-align:center;
+    padding:15px;
+    background:linear-gradient(135deg,#dbeafe,#fce7f3);
+    border-radius:15px;
+    margin-bottom:20px;
+    font-weight:600;
+    color:#333;
+}
+
+/* ================= SONG CARD ================= */
+
+.song-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    transition:0.2s;
+}
+
+.song-card:hover{
+    transform:scale(1.01);
+}
+
+/* LEFT SIDE */
+
+.song-info h4{
+    margin:0;
+    font-size:15px;
+}
+
+.song-info p{
+    margin:3px 0 0;
+    font-size:12px;
+    color:#777;
+}
+
+/* PLAY BUTTON */
+
+.play-btn{
+    padding:8px 12px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+}
+
+.play-btn:hover{
+    background:#3730a3;
+}
+
+/* TAG */
+
+.tag{
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:15px;
+    background:#eef2ff;
+    color:#4f46e5;
+}
+
+</style>
+
+<div class="music-wrapper">
+    <h1>Total Songs: {{ songs|length }}</h1>
+    <!-- HEADER -->
+    <div class="music-header">
+        <h2>🎧 Your Music Recommendation</h2>
+        <p>Based on your emotional state</p>
+    </div>
+
+    <!-- MOOD DISPLAY -->
+    <div class="mood-banner">
+        Detected Mood: {{ mood|title }}
+    </div>
+
+    <!-- SONG LIST -->
+    {% for song in songs %}
+
+<div class="song-card">
+
+    <div style="display:flex;align-items:center;gap:15px;">
+
+        <img src="{{ song.image }}"
+             width="60"
+             height="60"
+             style="border-radius:10px;">
+
+        <div class="song-info">
+            <h4>{{ song.title }}</h4>
+            <p>{{ song.artist }}</p>
+        </div>
+
+    </div>
+
+    <audio controls>
+        <source src="{{ song.stream_url }}" type="audio/mpeg">
+        Your browser does not support audio.
+    </audio>
+
+</div>
+
+{% endfor %}
+
+
+</div>
+
+{% endblock %}

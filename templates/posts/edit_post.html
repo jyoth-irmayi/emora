@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ================= WRAPPER ================= */
+
+.edit-wrapper{
+    max-width:800px;
+    margin:40px auto;
+    padding:20px;
+}
+
+/* ================= HEADER ================= */
+
+.edit-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.edit-header h2{
+    margin:0;
+    font-size:28px;
+}
+
+.edit-header p{
+    color:#777;
+}
+
+/* ================= TYPE BADGE ================= */
+
+.type-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:20px;
+    background:#eef2ff;
+    color:#4f46e5;
+    font-size:12px;
+    margin-bottom:15px;
+}
+
+/* ================= FORM CARD ================= */
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.06);
+}
+
+/* ================= INPUTS ================= */
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    margin-bottom:12px;
+    font-size:14px;
+}
+
+textarea{
+    width:100%;
+    min-height:180px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:14px;
+    resize:none;
+    line-height:1.6;
+}
+
+/* ================= QUOTE BG OPTIONS ================= */
+
+.bg-section{
+    margin:15px 0;
+}
+
+.bg-options{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.bg{
+    width:40px;
+    height:40px;
+    border-radius:8px;
+    cursor:pointer;
+    border:2px solid transparent;
+}
+
+.bg1{ background:#f3f4f6; }
+.bg2{ background:#dbeafe; }
+.bg3{ background:#fce7f3; }
+.bg4{ background:linear-gradient(135deg,#d1fae5,#bfdbfe); }
+
+.bg.active{
+    border:2px solid #4f46e5;
+}
+
+/* ================= QUOTE PREVIEW ================= */
+
+.preview{
+    margin-top:15px;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+    font-style:italic;
+    min-height:100px;
+}
+
+.preview.bg1{ background:#f3f4f6; }
+.preview.bg2{ background:#dbeafe; }
+.preview.bg3{ background:#fce7f3; }
+.preview.bg4{ background:linear-gradient(135deg,#d1fae5,#bfdbfe); }
+
+/* ================= BUTTONS ================= */
+
+.btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    cursor:pointer;
+    font-weight:600;
+    margin-top:10px;
+}
+
+.update-btn{
+    background:#4f46e5;
+    color:white;
+}
+
+.update-btn:hover{
+    background:#3730a3;
+}
+
+.delete-btn{
+    background:#ef4444;
+    color:white;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+/* ================= VIEW SWITCH ================= */
+
+.hidden{
+    display:none;
+}
+
+</style>
+
+<div class="edit-wrapper">
+
+    <!-- HEADER -->
+    <div class="edit-header">
+        <h2>Edit Your Post</h2>
+        <p>Update your emotion anytime</p>
+    </div>
+
+    <!-- TYPE BADGE -->
+    <div class="type-badge" id="typeBadge">Quote</div>
+
+    <div class="card">
+
+        <!-- TITLE -->
+        <input type="text" id="title" value="Existing title">
+
+        <!-- ================= QUOTE EDIT MODE ================= -->
+        <div id="quoteSection">
+
+            <textarea id="quoteText">Existing quote text...</textarea>
+
+            <div class="bg-section">
+                <small>Choose Background</small>
+
+                <div class="bg-options">
+                    <div class="bg bg1 active" onclick="setBg('bg1')"></div>
+                    <div class="bg bg2" onclick="setBg('bg2')"></div>
+                    <div class="bg bg3" onclick="setBg('bg3')"></div>
+                    <div class="bg bg4" onclick="setBg('bg4')"></div>
+                </div>
+
+                <div id="preview" class="preview bg1">
+                    Live preview of your quote...
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= POEM / STORY EDIT MODE ================= -->
+        <div id="textSection" class="hidden">
+
+            <textarea id="contentText">
+Existing poem or story content...
+            </textarea>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <button class="btn update-btn">Update Post</button>
+        <button class="btn delete-btn">Delete Post</button>
+
+    </div>
+
+</div>
+
+<script>
+
+let currentBg = "bg1";
+
+/* ================= UPDATE BACKGROUND ================= */
+
+function setBg(bg){
+
+    currentBg = bg;
+
+    document.querySelectorAll('.bg').forEach(b=>{
+        b.classList.remove('active');
+    });
+
+    event.target.classList.add('active');
+
+    let preview = document.getElementById("preview");
+    preview.className = "preview " + bg;
+
+}
+
+/* ================= LIVE PREVIEW ================= */
+
+document.getElementById("quoteText").addEventListener("input", function(){
+
+    document.getElementById("preview").innerText =
+        this.value || "Live preview of your quote...";
+
+});
+
+</script>
+
+{% endblock %}

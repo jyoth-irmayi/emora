@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ================= FEED WRAPPER ================= */
+
+.feed-wrapper{
+    max-width:650px;
+    margin:30px auto;
+    padding:10px;
+}
+
+/* ================= FILTER BAR ================= */
+
+.filters{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.filter{
+    padding:8px 14px;
+    border-radius:20px;
+    border:1px solid #ddd;
+    cursor:pointer;
+    font-size:13px;
+    color:#666;
+    background:white;
+}
+
+.filter.active{
+    background:#4f46e5;
+    color:white;
+    border:none;
+}
+
+/* ================= POST CARD ================= */
+
+.post-card{
+    background:white;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* HEADER */
+
+.post-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.user{
+    font-weight:600;
+    font-size:14px;
+}
+
+.mood{
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:15px;
+    background:#eef2ff;
+    color:#4f46e5;
+}
+
+/* CONTENT */
+
+.post-content{
+    font-size:15px;
+    color:#333;
+    line-height:1.6;
+    margin-bottom:10px;
+}
+
+/* QUOTE STYLE BACKGROUND */
+
+.quote-box{
+    background:#f3f4f6;
+    padding:20px;
+    border-radius:12px;
+    font-style:italic;
+}
+
+/* FOOTER */
+
+.post-actions{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:13px;
+    color:#777;
+}
+
+.actions-left{
+    display:flex;
+    gap:15px;
+}
+
+/* BUTTON LOOK */
+
+.action{
+    cursor:pointer;
+}
+
+.action:hover{
+    color:#4f46e5;
+}
+
+.comment-box{
+    display:none;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid #eee;
+}
+
+.comment-box input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    margin-bottom:8px;
+}
+
+.comment-box button{
+    padding:8px 14px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+}
+
+</style>
+
+<div class="feed-wrapper">
+
+    <!-- FILTERS -->
+    <div class="filters">
+        <div class="filter active">All</div>
+        <div class="filter">Quotes</div>
+        <div class="filter">Poems</div>
+        <div class="filter">Stories</div>
+    </div>
+
+    <!-- POST 1 -->
+    <div class="post-card">
+
+        <div class="post-header">
+            <div class="user">Anonymous</div>
+            <div class="mood">🌿 Healing</div>
+        </div>
+
+        <div class="post-content quote-box">
+            “Sometimes silence speaks louder than words.”
+        </div>
+
+        <div class="post-actions">
+            <div class="actions-left">
+                <div class="action">❤️ Like</div>
+                <div class="action">💬 Comment</div>
+            </div>
+            <div class="action">⭐ Save</div>
+        </div>
+
+    </div>
+
+    <!-- POST 2 -->
+    <div class="post-card">
+
+        <div class="post-header">
+            <div class="user">User123</div>
+            <div class="mood">💔 Sad</div>
+        </div>
+
+        <div class="post-content">
+            The night feels heavier when thoughts don’t sleep...
+        </div>
+
+        <div class="post-actions">
+            <div class="actions-left">
+                <div class="action">❤️ Like</div>
+                <div class="action">💬 Comment</div>
+            </div>
+            <div class="action">⭐ Save</div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

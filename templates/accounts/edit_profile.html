@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+.edit-profile-container{
+    max-width:600px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.edit-card{
+    background:white;
+    padding:30px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.edit-card h2{
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+    color:#333;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+}
+
+.form-group textarea{
+    resize:none;
+    height:100px;
+}
+
+.color-picker{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.color-box{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    cursor:pointer;
+    border:2px solid transparent;
+}
+
+.color-box.active{
+    border:2px solid #000;
+}
+
+.save-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#4f46e5;
+    color:white;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.preview-avatar{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    margin:10px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:24px;
+    font-weight:600;
+}
+
+</style>
+
+<div class="edit-profile-container">
+
+    <div class="edit-card">
+
+        <h2>Edit Profile</h2>
+
+        <!-- Avatar Preview -->
+        <!-- <div class="preview-avatar"
+             id="avatarPreview"
+             style="background-color:{{ user.avatar_color }};">
+            {{ user.get_initials }}
+        </div> -->
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="{{ user.username }}">
+            </div>
+
+            <!-- Bio -->
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea name="bio">{{ user.bio }}</textarea>
+            </div>
+
+            <!-- Avatar Color -->
+            <div class="form-group">
+                <label>Avatar Color</label>
+
+                <input type="hidden" name="avatar_color" id="avatarColor"
+                       value="{{ user.avatar_color }}">
+
+                <div class="color-picker">
+                    <div class="color-box" style="background:#4f46e5;" data-color="#4f46e5"></div>
+                    <div class="color-box" style="background:#ef4444;" data-color="#ef4444"></div>
+                    <div class="color-box" style="background:#10b981;" data-color="#10b981"></div>
+                    <div class="color-box" style="background:#f59e0b;" data-color="#f59e0b"></div>
+                    <div class="color-box" style="background:#a855f7;" data-color="#a855f7"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="save-btn">
+                Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+const boxes = document.querySelectorAll(".color-box");
+const input = document.getElementById("avatarColor");
+const preview = document.getElementById("avatarPreview");
+
+boxes.forEach(box => {
+    box.addEventListener("click", () => {
+
+        let color = box.getAttribute("data-color");
+
+        input.value = color;
+        preview.style.backgroundColor = color;
+
+        boxes.forEach(b => b.classList.remove("active"));
+        box.classList.add("active");
+
+    });
+});
+</script>
+
+{% endblock %}

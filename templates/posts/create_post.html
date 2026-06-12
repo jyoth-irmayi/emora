@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* =========================
+   WRAPPER
+========================= */
+
+.create-wrapper{
+    max-width:750px;
+    margin:40px auto;
+    padding:20px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.create-header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.create-header h2{
+    font-size:28px;
+    margin:0;
+}
+
+.create-header p{
+    color:#777;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.tab{
+    padding:10px 18px;
+    border-radius:20px;
+    border:1px solid #ddd;
+    cursor:pointer;
+    font-weight:600;
+    background:white;
+    color:#666;
+    transition:0.3s;
+}
+
+.tab.active{
+    background:#4f46e5;
+    color:white;
+    border:none;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.06);
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin-bottom:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:14px;
+    outline:none;
+}
+
+textarea{
+    min-height:140px;
+    resize:none;
+}
+
+/* =========================
+   HELP TEXT
+========================= */
+
+.helper{
+    font-size:12px;
+    color:#777;
+    margin:10px 0;
+}
+
+/* =========================
+   BACKGROUND SELECTOR
+========================= */
+
+.bg-options{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.bg-box{
+    width:40px;
+    height:40px;
+    border-radius:8px;
+    cursor:pointer;
+    border:2px solid transparent;
+}
+
+.bg1{ background:#f3f4f6; }
+.bg2{ background:#dbeafe; }
+.bg3{ background:#fce7f3; }
+.bg4{ background:linear-gradient(135deg,#d1fae5,#bfdbfe); }
+
+.bg-box.active{
+    border:2px solid #4f46e5;
+}
+
+/* =========================
+   QUOTE PREVIEW
+========================= */
+
+.quote-card{
+    margin-top:15px;
+    padding:25px;
+    border-radius:15px;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:16px;
+    transition:0.3s;
+    color:#333;
+}
+
+/* backgrounds applied dynamically */
+.quote-bg1{ background:#f3f4f6; }
+.quote-bg2{ background:#dbeafe; }
+.quote-bg3{ background:#fce7f3; }
+.quote-bg4{ background:linear-gradient(135deg,#d1fae5,#bfdbfe); }
+
+/* =========================
+   MOOD TAGS
+========================= */
+
+.mood-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.tag{
+    padding:6px 12px;
+    border:1px solid #ddd;
+    border-radius:20px;
+    font-size:12px;
+    cursor:pointer;
+}
+
+.tag.active{
+    background:#4f46e5;
+    color:white;
+    border:none;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.post-btn{
+    width:100%;
+    padding:12px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.post-btn:hover{
+    background:#3730a3;
+}
+
+</style>
+
+<div class="create-wrapper">
+
+    <!-- HEADER -->
+    <div class="create-header">
+        <h2>Create Emotion</h2>
+        <p>Share your feelings with EMORA</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('quote', event)">Quote</div>
+        <div class="tab" onclick="switchTab('poem', event)">Poem</div>
+        <div class="tab" onclick="switchTab('story', event)">Story</div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+
+        <input type="text" id="title" placeholder="Title (optional)">
+
+        <textarea id="content" placeholder="Write your quote..."></textarea>
+
+        <!-- BACKGROUND SELECTOR (ONLY FOR QUOTE) -->
+        <div id="bgSection">
+
+            <div class="helper">Choose Quote Background</div>
+
+            <div class="bg-options">
+
+                <div class="bg-box bg1 active" onclick="setBg('bg1', event)"></div>
+                <div class="bg-box bg2" onclick="setBg('bg2', event)"></div>
+                <div class="bg-box bg3" onclick="setBg('bg3', event)"></div>
+                <div class="bg-box bg4" onclick="setBg('bg4', event)"></div>
+
+            </div>
+
+            <!-- PREVIEW -->
+            <div id="preview" class="quote-card quote-bg1">
+                Your quote preview will appear here...
+            </div>
+
+        </div>
+
+        <!-- MOOD -->
+        <div class="helper">Select Mood</div>
+
+        <div class="mood-tags">
+            <div class="tag active">Healing 🌿</div>
+            <div class="tag">Sad 💔</div>
+            <div class="tag">Motivated 🔥</div>
+            <div class="tag">Calm 🌊</div>
+            <div class="tag">Lonely 🌙</div>
+        </div>
+
+        <label>
+            <input type="checkbox"> Post anonymously
+        </label>
+
+        <br><br>
+
+        <button class="post-btn" id="postBtn">Share Quote</button>
+
+    </div>
+
+</div>
+
+<script>
+
+let currentType = "quote";
+let selectedBg = "bg1";
+
+/* =========================
+   TAB SWITCH
+========================= */
+
+function switchTab(type, event){
+
+    currentType = type;
+
+    document.querySelectorAll('.tab').forEach(t=>{
+        t.classList.remove('active');
+    });
+
+    event.target.classList.add('active');
+
+    let content = document.getElementById("content");
+    let bgSection = document.getElementById("bgSection");
+    let postBtn = document.getElementById("postBtn");
+
+    if(type === "quote"){
+        content.placeholder = "Write your quote...";
+        bgSection.style.display = "block";
+        postBtn.innerText = "Share Quote";
+    }
+
+    else if(type === "poem"){
+        content.placeholder = "Write your poem...";
+        bgSection.style.display = "none";
+        postBtn.innerText = "Share Poem";
+    }
+
+    else if(type === "story"){
+        content.placeholder = "Write your story...";
+        bgSection.style.display = "none";
+        postBtn.innerText = "Share Story";
+    }
+}
+
+/* =========================
+   BACKGROUND CHANGE
+========================= */
+
+function setBg(bg, event){
+
+    selectedBg = bg;
+
+    document.querySelectorAll('.bg-box').forEach(b=>{
+        b.classList.remove('active');
+    });
+
+    event.target.classList.add('active');
+
+    updatePreview();
+}
+
+/* =========================
+   LIVE PREVIEW
+========================= */
+
+document.getElementById("content").addEventListener("input", updatePreview);
+
+function updatePreview(){
+
+    let text = document.getElementById("content").value;
+    let preview = document.getElementById("preview");
+
+    preview.innerText = text ? text : "Your quote preview will appear here...";
+
+    preview.className = "quote-card quote-" + selectedBg;
+}
+
+</script>
+
+{% endblock %}
