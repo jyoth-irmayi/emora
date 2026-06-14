@@ -76,11 +76,29 @@
     line-height:1.6;
     margin-bottom:10px;
 }
+.bg1{
+    background:#f3f4f6;
+}
+
+.bg2{
+    background:#dbeafe;
+}
+
+.bg3{
+    background:#fce7f3;
+}
+
+.bg4{
+    background:linear-gradient(
+        135deg,
+        #d1fae5,
+        #bfdbfe
+    );
+}
 
 /* QUOTE STYLE BACKGROUND */
 
 .quote-box{
-    background:#f3f4f6;
     padding:20px;
     border-radius:12px;
     font-style:italic;
@@ -125,6 +143,32 @@
     border-radius:10px;
     margin-bottom:8px;
 }
+.comments-list{
+    margin-top:15px;
+}
+
+.comments-list{
+    max-height:200px;
+    overflow-y:auto;
+    scrollbar-width:none;
+    margin-top:10px;
+    border-top:1px solid #eee;
+    padding-top:10px;
+}
+
+.comment-item{
+    background:#f8f8f8;
+    padding:8px 12px;
+    border-radius:8px;
+    margin-bottom:8px;
+    justify-content:space-between;
+  
+}
+
+.comment-item p{
+    margin:5px 0 0;
+    font-size:14px;
+}
 
 .comment-box button{
     padding:8px 14px;
@@ -135,6 +179,23 @@
     cursor:pointer;
     font-size:13px;
 }
+.comment-left{
+    display:flex;
+    gap:6px;
+    align-items:center;
+}
+
+.delete-comment{
+    font-size:12px;
+    text-decoration:none;
+    color:#999;
+    transition:0.2s;
+    padding-left: 550px;
+}
+
+.delete-comment:hover{
+    color:red;
+}
 
 </style>
 
@@ -142,55 +203,139 @@
 
     <!-- FILTERS -->
     <div class="filters">
-        <div class="filter active">All</div>
-        <div class="filter">Quotes</div>
-        <div class="filter">Poems</div>
-        <div class="filter">Stories</div>
+        <a href="{% url 'feed' %}"
+        class="tab {% if not current_type %}active{% endif %}" style="text-decoration: none;">
+        All
+        </a>
+
+        <a href="{% url 'feed' %}?type=quote"
+        class="tab {% if current_type == 'quote' %}active{% endif %}" style="text-decoration: none;">
+        Quotes
+        </a>
+
+        <a href="{% url 'feed' %}?type=poem"
+        class="tab {% if current_type == 'poem' %}active{% endif %}" style="text-decoration: none">
+        Poems
+        </a>
+
+        <a href="{% url 'feed' %}?type=story"
+        class="tab {% if current_type == 'story' %}active{% endif %}" style="text-decoration: none;">
+        Stories
+        </a>
     </div>
 
     <!-- POST 1 -->
+    {% for post in posts %}
+    <a href="{% url 'post_detail' post.id %}"
+     style="text-decoration:none;color:inherit;">
     <div class="post-card">
-
+      
         <div class="post-header">
-            <div class="user">Anonymous</div>
-            <div class="mood">🌿 Healing</div>
+            <div class="user">{% if post.is_anonymous %}
+                Anonymous
+            {% else %}
+                {{ post.user.username }}
+            {% endif %}</div>
+            <div class="mood">{{ post.mood|title }}</div>
         </div>
 
-        <div class="post-content quote-box">
-            “Sometimes silence speaks louder than words.”
+        {% if post.post_type == 'quote' %}
+
+        <div class="quote-box {{ post.background }}">
+            "{{ post.content }}"
         </div>
 
-        <div class="post-actions">
-            <div class="actions-left">
-                <div class="action">❤️ Like</div>
-                <div class="action">💬 Comment</div>
-            </div>
-            <div class="action">⭐ Save</div>
-        </div>
-
-    </div>
-
-    <!-- POST 2 -->
-    <div class="post-card">
-
-        <div class="post-header">
-            <div class="user">User123</div>
-            <div class="mood">💔 Sad</div>
-        </div>
+        {% else %}
 
         <div class="post-content">
-            The night feels heavier when thoughts don’t sleep...
+            {{ post.content|truncatechars:300 }}
         </div>
+
+        {% endif %}
 
         <div class="post-actions">
             <div class="actions-left">
-                <div class="action">❤️ Like</div>
-                <div class="action">💬 Comment</div>
+                <a href="{% url 'like_post' post.id %}"
+                    style="text-decoration:none;">
+                    ❤️ {{ post.likes.count }}
+                </a>
+                <div class="action"
+                    onclick="toggleComment({{ post.id }})">
+                    💬 Comment ({{ post.comments.count }})
+                </div>
             </div>
             <div class="action">⭐ Save</div>
         </div>
+        <div class="comment-box"
+            id="comment-{{ post.id }}">
+
+            <form method="POST"
+                action="{% url 'comment_post' post.id %}">
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="comment"
+                    placeholder="Write a comment..."
+                >
+
+                <button type="submit">
+                    Comment
+                </button>
+
+            </form>
+            <div class="comments-list">
+
+                {% for comment in post.comments.all|dictsortreversed:"created_at" %}
+
+                    <div class="comment-item">
+
+                        <strong>
+                            {{ comment.user.username }}
+                        </strong>
+
+                        <span>
+                            {{ comment.content }}
+                        </span>
+                        {% if comment.user == request.user %}
+                        <a href="{% url 'delete_comment' comment.id %}"
+                        class="delete-comment">
+                            🗑️
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No comments yet.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
 
     </div>
+    {% endfor %}
 
 </div>
+<script>
+
+function toggleComment(postId){
+
+    let box = document.getElementById(
+        "comment-" + postId
+    );
+
+    if(box.style.display === "block"){
+        box.style.display = "none";
+    }
+    else{
+        box.style.display = "block";
+    }
+}
+
+</script>
 {% endblock %}

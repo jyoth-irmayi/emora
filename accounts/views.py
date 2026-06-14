@@ -1,7 +1,8 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import  login as auth_login,authenticate,logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from posts.models import Post
 import random
 # Create your views here.
 
@@ -95,9 +96,26 @@ def home(request):
 
 def profile(request):
     user_data = request.user
+    post_type = request.GET.get('type')
 
-    return render(request,'accounts/profile.html',{'user_data':'user_data'})
+    posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    if post_type:
+        posts = posts.filter(
+            post_type=post_type
+        )
 
+    return render(request,'accounts/profile.html',{'user_data':user_data,'posts':posts,'current_type': post_type})
+
+def post_detail(request,id):
+    post = get_object_or_404(Post,id=id)
+
+    return render(
+        request,
+        'posts/post_detail.html',
+        {
+            'post': post
+        }
+    )
 
 def edit_profile(request):
     return render(request,'accounts/edit_profile.html')

@@ -130,6 +130,25 @@
     transition:0.3s;
     cursor:pointer;
 }
+.bg1{
+    background:#f3f4f6 !important;
+}
+
+.bg2{
+    background:#dbeafe !important;
+}
+
+.bg3{
+    background:#fce7f3 !important;
+}
+
+.bg4{
+    background:linear-gradient(
+        135deg,
+        #d1fae5,
+        #bfdbfe
+    ) !important;
+}
 
 .post-box:hover{
     transform:scale(1.03);
@@ -182,7 +201,7 @@
     <div class="stats">
 
         <div class="stat">
-            <h3>24</h3>
+            <h3>{{ posts.count }}</h3>
             <p>Posts</p>
         </div>
 
@@ -201,52 +220,124 @@
     <!-- TABS -->
     <div class="tabs">
 
-        <div class="tab active">All</div>
-        <div class="tab">Quotes</div>
-        <div class="tab">Poems</div>
-        <div class="tab">Stories</div>
-        <div class="tab">Saved</div>
+        <a href="{% url 'profile' %}"
+        class="tab {% if not current_type %}active{% endif %}" style="text-decoration: none;">
+        All
+        </a>
+
+        <a href="{% url 'profile' %}?type=quote"
+        class="tab {% if current_type == 'quote' %}active{% endif %}" style="text-decoration: none;">
+        Quotes
+        </a>
+
+        <a href="{% url 'profile' %}?type=poem"
+        class="tab {% if current_type == 'poem' %}active{% endif %}" style="text-decoration: none">
+        Poems
+        </a>
+
+        <a href="{% url 'profile' %}?type=story"
+        class="tab {% if current_type == 'story' %}active{% endif %}" style="text-decoration: none;">
+        Stories
+        </a>
+
+        <a href="#"
+        class="tab" style="text-decoration: none;">
+        Saved
+        </a>
 
     </div>
 
     <!-- POSTS GRID -->
     <div class="posts-grid">
+        {% for post in posts %}
+        <a href="{% url 'post_detail' post.id %}"
+            style="text-decoration:none;color:inherit;">
+            {% if post.post_type == 'quote' %}
 
-        <div class="post-box">
-            <div class="post-type">Quote</div>
-            <div class="post-text">
-                “Sometimes silence speaks louder than words.”
+            <div class="post-box {{ post.background }}">
+
+                <div class="post-type">
+                    Quote
+                </div>
+
+                <div class="post-text"
+                    style="
+                    text-align:center;
+                    font-size:16px;
+                    font-weight:600;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    flex:1;
+                    ">
+                    "{{ post.content|truncatechars:100 }}"
+                </div>
+
+                <div class="post-meta">
+                    <span>{{ post.mood|title }}</span>
+                    <span>{{ post.created_at|date:'M d' }}</span>
+                </div>
+
             </div>
-            <div class="post-meta">
-                <span>❤️ 45</span>
-                <span>2h</span>
+
+            {% elif post.post_type == 'poem' %}
+
+            <div class="post-box">
+
+                <div class="post-type">
+                    Poem
+                </div>
+
+                {% if post.title %}
+                    <strong>{{ post.title }}</strong>
+                {% endif %}
+
+                <div class="post-text">
+                    {{ post.content|truncatechars:120 }}
+                </div>
+
+                <div class="post-meta">
+                    <span>{{ post.mood|title }}</span>
+                    <span>{{ post.created_at|date:'M d' }}</span>
+                </div>
+
             </div>
+
+            {% elif post.post_type == 'story' %}
+
+            <div class="post-box">
+
+                <div class="post-type">
+                    Story
+                </div>
+
+                {% if post.title %}
+                    <strong>{{ post.title }}</strong>
+                {% endif %}
+
+                <div class="post-text">
+                    {{ post.content|truncatechars:150 }}
+                </div>
+
+                <div class="post-meta">
+                    <span>{{ post.mood|title }}</span>
+                    <span>{{ post.created_at|date:'M d' }}</span>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        {% empty %}
+
+            <p>No posts yet.</p>
+
+        {% endfor %}
+        </a>
+
         </div>
-
-        <div class="post-box">
-            <div class="post-type">Poem</div>
-            <div class="post-text">
-                The night listens when no one else does...
-            </div>
-            <div class="post-meta">
-                <span>❤️ 32</span>
-                <span>1d</span>
-            </div>
-        </div>
-
-        <div class="post-box">
-            <div class="post-type">Story</div>
-            <div class="post-text">
-                Once upon a broken heart...
-            </div>
-            <div class="post-meta">
-                <span>❤️ 18</span>
-                <span>3d</span>
-            </div>
         </div>
 
     </div>
-
-</div>
 
 {% endblock %}  

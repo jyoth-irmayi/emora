@@ -213,11 +213,17 @@ textarea{
     </div>
 
     <!-- FORM -->
+    <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="post_type" id="post_type" value="quote">
+    <input type="hidden" name="background" id="background" value="bg1">
+    <input type="hidden" name="mood" id="mood" value="healing">
+
     <div class="form-card">
 
-        <input type="text" id="title" placeholder="Title (optional)">
+        <input type="text" id="title" name="title" placeholder="Title (optional)">
 
-        <textarea id="content" placeholder="Write your quote..."></textarea>
+        <textarea id="content" name="content" placeholder="Write your quote..."></textarea>
 
         <!-- BACKGROUND SELECTOR (ONLY FOR QUOTE) -->
         <div id="bgSection">
@@ -244,22 +250,44 @@ textarea{
         <div class="helper">Select Mood</div>
 
         <div class="mood-tags">
-            <div class="tag active">Healing 🌿</div>
-            <div class="tag">Sad 💔</div>
-            <div class="tag">Motivated 🔥</div>
-            <div class="tag">Calm 🌊</div>
-            <div class="tag">Lonely 🌙</div>
+
+            <div class="tag active"
+                onclick="setMood('healing', event)">
+                Healing 🌿
+            </div>
+
+            <div class="tag"
+                onclick="setMood('sad', event)">
+                Sad 💔
+            </div>
+
+            <div class="tag"
+                onclick="setMood('motivated', event)">
+                Motivated 🔥
+            </div>
+
+            <div class="tag"
+                onclick="setMood('calm', event)">
+                Calm 🌊
+            </div>
+
+            <div class="tag"
+                onclick="setMood('lonely', event)">
+                Lonely 🌙
+            </div>
+
         </div>
 
         <label>
-            <input type="checkbox"> Post anonymously
+            <input type="checkbox" name="is_anonymous"> Post anonymously
         </label>
 
         <br><br>
 
-        <button class="post-btn" id="postBtn">Share Quote</button>
+        <button  type="submit" class="post-btn" id="postBtn">Share Quote</button>
 
     </div>
+    </form>
 
 </div>
 
@@ -275,6 +303,7 @@ let selectedBg = "bg1";
 function switchTab(type, event){
 
     currentType = type;
+    document.getElementById("post_type").value = type;
 
     document.querySelectorAll('.tab').forEach(t=>{
         t.classList.remove('active');
@@ -311,7 +340,10 @@ function switchTab(type, event){
 
 function setBg(bg, event){
 
+    event.preventDefault();
+
     selectedBg = bg;
+    document.getElementById("background").value = bg;
 
     document.querySelectorAll('.bg-box').forEach(b=>{
         b.classList.remove('active');
@@ -321,7 +353,6 @@ function setBg(bg, event){
 
     updatePreview();
 }
-
 /* =========================
    LIVE PREVIEW
 ========================= */
@@ -336,6 +367,19 @@ function updatePreview(){
     preview.innerText = text ? text : "Your quote preview will appear here...";
 
     preview.className = "quote-card quote-" + selectedBg;
+}
+
+function setMood(mood, event){
+
+    event.preventDefault();
+
+    document.querySelectorAll('.tag').forEach(tag=>{
+        tag.classList.remove('active');
+    });
+
+    event.target.classList.add('active');
+
+    document.getElementById('mood').value = mood;
 }
 
 </script>
