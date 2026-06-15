@@ -98,11 +98,21 @@
         <h2>Edit Profile</h2>
 
         <!-- Avatar Preview -->
-        <!-- <div class="preview-avatar"
-             id="avatarPreview"
-             style="background-color:{{ user.avatar_color }};">
+        <div class="profile-pic" id="avatarPreview"
+            style="width:110px;
+                    height:110px;
+                    border-radius:50%;
+                    background:{{ user.avatar_color }};
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:40px;
+                    font-weight:bold;
+                    color:white;">
+
             {{ user.get_initials }}
-        </div> -->
+
+        </div>
 
         <form method="POST">
             {% csrf_token %}
@@ -116,7 +126,7 @@
             <!-- Bio -->
             <div class="form-group">
                 <label>Bio</label>
-                <textarea name="bio">{{ user.bio }}</textarea>
+                <textarea name="bio">{{ user.bio }} </textarea>
             </div>
 
             <!-- Avatar Color -->
@@ -162,6 +172,19 @@ boxes.forEach(box => {
         box.classList.add("active");
 
     });
+});
+
+
+window.addEventListener("DOMContentLoaded", () => {
+    const currentColor = input.value;
+
+    boxes.forEach(box => {
+        if (box.getAttribute("data-color") === currentColor) {
+            box.classList.add("active");
+        }
+    });
+
+    preview.style.backgroundColor = currentColor;
 });
 </script>
 

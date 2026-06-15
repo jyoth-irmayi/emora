@@ -93,7 +93,118 @@
     color:#4f46e5;
     font-weight:600;
 }
+.actions-left{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-top:15px;
+}
 
+.action-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+    font-size:15px;
+    color:#333;
+    background:none;
+    border:none;
+    padding:0;
+}
+
+.action-btn:hover{
+    color:#4f46e5;
+}
+.comment-box{
+    display:none;
+    margin-top:15px;
+    padding:15px;
+    border-top:1px solid #eee;
+    background:#fafafa;
+    border-radius:12px;
+}
+
+/* INPUT AREA */
+.comment-box form{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.comment-box input{
+    flex:1;
+    padding:10px 12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    font-size:14px;
+    background:white;
+}
+
+.comment-box input:focus{
+    border-color:#4f46e5;
+}
+
+/* COMMENT BUTTON */
+.comment-box button{
+    padding:10px 16px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:13px;
+    transition:0.2s;
+}
+
+.comment-box button:hover{
+    background:#3730a3;
+}
+
+/* COMMENT LIST */
+.comments-list{
+    max-height:250px;
+    overflow-y:auto;
+    padding-right:5px;
+}
+
+/* COMMENT ITEM */
+.comment-item{
+    background:white;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* USERNAME */
+.comment-item strong{
+    font-size:13px;
+    color:#4f46e5;
+}
+
+/* COMMENT TEXT */
+.comment-item span{
+    font-size:14px;
+    color:#333;
+}
+
+/* DELETE BUTTON */
+.delete-comment{
+    font-size:12px;
+    color:#999;
+    text-decoration:none;
+    align-self:flex-end;
+    margin-top:-20px;
+}
+
+.delete-comment:hover{
+    color:red;
+}
 </style>
 
 <div class="post-wrapper">
@@ -143,17 +254,111 @@
             <div class="quote-style {{ post.background }}">
                 "{{ post.content }}"
             </div>
+            <div class="actions-left">
+                <a href="{% url 'like_post' post.id %}"
+                    style="text-decoration:none;">
+                    ❤️ {{ post.likes.count }}
+                </a>
+                <div class="action"
+                    onclick="toggleComment({{ post.id }})">
+                    💬 Comment ({{ post.comments.count }})
+                </div>
+            </div>
 
         {% else %}
 
             <div class="post-content">
                 {{ post.content }}
             </div>
+            <div class="actions-left">
+                <a href="{% url 'like_post' post.id %}"
+                    style="text-decoration:none;">
+                    ❤️ {{ post.likes.count }}
+                </a>
+                <div class="action-btn" type="button"
+                    onclick="toggleComment({{ post.id }})">
+                    💬 Comment ({{ post.comments.count }})
+                </div>
+            </div>
 
         {% endif %}
+        <div class="comment-box"
+            id="comment-{{ post.id }}">
+
+            <form method="POST"
+                action="{% url 'comment_post' post.id %}">
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="comment"
+                    placeholder="Write a comment..."
+                >
+
+                <button type="submit">
+                    Comment
+                </button>
+
+            </form>
+            <div class="comments-list">
+
+                {% for comment in post.comments.all|dictsortreversed:"created_at" %}
+
+                    <div class="comment-item">
+
+                        <strong>
+                            {{ comment.user.username }}
+                        </strong>
+
+                        <span>
+                            {{ comment.content }}
+                        </span>
+                        {% if comment.user == request.user %}
+                        <a href="{% url 'delete_comment' comment.id %}"
+                        class="delete-comment">
+                            🗑️
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No comments yet.</p>
+
+            {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+  
+
+</div>
 
     </div>
 
 </div>
+
+<script>
+
+
+function toggleComment(postId){
+
+    let box = document.getElementById(
+        "comment-" + postId
+    );
+
+    if(box.style.display === "block"){
+        box.style.display = "none";
+    }
+    else{
+        box.style.display = "block";
+    }
+}
+
+</script>
 
 {% endblock %}
