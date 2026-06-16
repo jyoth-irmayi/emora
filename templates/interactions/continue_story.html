@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+.story-wrapper{
+    max-width:700px;
+    margin:30px auto;
+    padding:15px;
+}
+
+.story-card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom:20px;
+}
+
+.story-title{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.story-author{
+    color:#666;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+.story-content{
+    line-height:1.8;
+    color:#333;
+    white-space:pre-line;
+}
+
+.section-title{
+    margin:25px 0 15px;
+    font-size:18px;
+    font-weight:600;
+}
+
+.contribution-card{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+}
+
+.contributor{
+    font-weight:600;
+    margin-bottom:8px;
+    color:#4f46e5;
+}
+
+.contribution-text{
+    color:#333;
+    line-height:1.7;
+    white-space:pre-line;
+}
+
+.add-story-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-top:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+.add-story-box textarea{
+    width:100%;
+    min-height:150px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    resize:vertical;
+    font-size:14px;
+}
+
+.add-story-box button{
+    margin-top:10px;
+    padding:10px 18px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.add-story-box button:hover{
+    opacity:0.9;
+}
+
+</style>
+
+<div class="story-wrapper">
+
+    <!-- STORY START -->
+
+    <div class="story-card">
+
+        <div class="story-title">
+            {{ story.title }}
+        </div>
+
+        <div class="story-author">
+            Started by {{ story.created_by.username }}
+        </div>
+
+        <div class="story-content">
+            {{ story.starter_content }}
+        </div>
+
+    </div>
+
+    <!-- CONTRIBUTIONS -->
+
+    <div class="section-title">
+        Story Continuations
+        ({{ contributions.count }})
+    </div>
+
+    {% for contribution in contributions %}
+
+    <div class="contribution-card">
+
+        <div class="contributor">
+            {{ contribution.user.username }}
+        </div>
+
+        <div class="contribution-text">
+            {{ contribution.content }}
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="contribution-card">
+        Be the first person to continue this story.
+    </div>
+
+    {% endfor %}
+
+    <!-- ADD CONTINUATION -->
+
+    <div class="add-story-box">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <textarea
+                name="content"
+                placeholder="Continue the story..."></textarea>
+
+            <button type="submit">
+                Continue Story
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -128,3 +128,19 @@ class SavedPost(models.Model):
 
     def __str__(self):
         return f'{self.user.username} saved {self.post.id}'
+    
+
+class QuoteOfWeek(models.Model):
+
+    quote = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE
+    )
+
+    week_start = models.DateField(
+        unique=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )

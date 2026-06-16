@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="story-wrapper">
+
+    <!-- STORY HEADER -->
+    <div class="story-header">
+        <h1>{{ story.title }}</h1>
+        <p class="author">Started by {{ story.created_by.username }}</p>
+    </div>
+
+    <!-- STARTER CONTENT -->
+    <div class="story-block starter">
+        <h3>Start of the Story</h3>
+        <p>{{ story.starter_content }}</p>
+    </div>
+
+    <!-- CONTINUATIONS -->
+    <div class="story-continuation">
+        <h3>Continuations</h3>
+
+        {% for c in contributions %}
+            <div class="story-block contribution">
+                <div class="meta">
+                    <strong>{{ c.user.username }}</strong>
+                    <small>{{ c.created_at|date:"M d, Y H:i" }}</small>
+                </div>
+                <p>{{ c.content }}</p>
+            </div>
+        {% empty %}
+            <p>No continuations yet. Be the first to continue this story.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<style>
+.story-wrapper{
+    max-width:800px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.story-header{
+    margin-bottom:30px;
+}
+
+.story-header h1{
+    font-size:28px;
+}
+
+.story-block{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.starter{
+    border-left:5px solid #4f46e5;
+}
+
+.contribution{
+    border-left:5px solid #22c55e;
+}
+
+.meta{
+    font-size:12px;
+    color:#777;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+}
+</style>
+
+{% endblock %}

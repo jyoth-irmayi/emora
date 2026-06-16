@@ -1,8 +1,12 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Post,Like,Comment,SavedPost
+from .models import Post,Like,Comment,SavedPost,QuoteOfWeek
+from interactions.models import StoryChain,StoryContribution
 from django.http import JsonResponse
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+from datetime import timedelta
 # Create your views here.
 def create_post(request):
     if request.method == 'POST':
@@ -22,12 +26,72 @@ def edit_post(request):
     return render(render,'posts/edit_post.html')
 
 def feed(request):
-    post_type = request.GET.get('type')
-    posts = Post.objects.all().order_by('-created_at')
-    if post_type:
-        posts=posts.filter(post_type=post_type)
 
-    return render(request,'posts/feed.html',{'posts': posts})
+    post_type = request.GET.get('type')
+
+    posts = Post.objects.all().order_by('-created_at')
+
+    if post_type:
+        posts = posts.filter(post_type=post_type)
+
+    stories = StoryChain.objects.filter(
+        is_completed=False
+    )
+
+    feed_items = []
+
+    for post in posts:
+        feed_items.append({
+            'type': 'post',
+            'data': post
+        })
+
+    for story in stories:
+        feed_items.append({
+            'type': 'storychain',
+            'data': story
+        })
+
+    feed_items.sort(
+        key=lambda item: item['data'].created_at,
+        reverse=True
+    )
+
+    today = timezone.now().date()
+
+    week_start = today - timedelta(
+        days=today.weekday()
+    )
+
+    quote_of_week = QuoteOfWeek.objects.filter(
+        week_start=week_start
+    ).first()
+
+    if not quote_of_week:
+
+        winner_quote = (
+            Post.objects
+            .filter(post_type='quote')
+            .annotate(total_likes=Count('likes'))
+            .order_by('-total_likes')
+            .first()
+        )
+
+        if winner_quote:
+            quote_of_week = QuoteOfWeek.objects.create(
+                quote=winner_quote,
+                week_start=week_start
+            )
+
+    return render(
+        request,
+        'posts/feed.html',
+        {
+            'feed_items': feed_items,
+            'quote_of_week': quote_of_week,
+            'current_type': post_type,
+        }
+    )
 
 def like_post(request, post_id):
 

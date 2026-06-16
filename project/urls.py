@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('moods/', include('moods.urls')),
+    path('interactions/', include('interactions.urls')),
 ]

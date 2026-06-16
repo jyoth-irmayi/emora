@@ -103,7 +103,39 @@
     border-radius:12px;
     font-style:italic;
 }
+.quote-week-card{
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+    color:white;
+    padding:25px;
+    border-radius:16px;
+    margin-bottom:25px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(79,70,229,0.2);
+}
 
+.week-title{
+    font-size:13px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    opacity:0.9;
+    margin-bottom:12px;
+}
+
+.week-content{
+    font-size:20px;
+    line-height:1.6;
+    font-weight:600;
+    margin-bottom:12px;
+}
+
+.week-author{
+    font-size:13px;
+    opacity:0.8;
+}
 /* FOOTER */
 
 .post-actions{
@@ -223,9 +255,36 @@
         Stories
         </a>
     </div>
+    {% if quote_of_week %}
 
+<div class="quote-week-card">
+
+    <div class="week-title">
+        🌟 Quote Of The Week
+    </div>
+
+    <div class="week-content">
+        "{{ quote_of_week.quote.content }}"
+    </div>
+
+    <div class="week-author">
+        —
+        {% if quote_of_week.quote.is_anonymous %}
+            Anonymous
+        {% else %}
+            {{ quote_of_week.quote.user.username }}
+        {% endif %}
+    </div>
+
+</div>
+
+{% endif %}
     <!-- POST 1 -->
-    {% for post in posts %}
+    {% for post in feed_items %}
+
+    {% if post.type == 'post' %}
+
+    {% with post=post.data %}
     <a href="{% url 'post_detail' post.id %}"
      style="text-decoration:none;color:inherit;">
     <div class="post-card">
@@ -327,6 +386,49 @@
         </div>
 
     </div>
+    {% endwith %}
+
+        {% elif post.type == 'storychain' %}
+
+        <div class="post-card"  onclick="window.location='{% url 'story_detail' post.data.id %}'">
+            
+            <div class="post-header">
+
+                <div class="user">
+                    📖 {{ post.data.created_by.username }}
+                </div>
+
+                <div class="mood">
+                    Continue Story
+                </div>
+
+            </div>
+
+            <h3 style="margin-bottom:10px;">
+                {{ post.data.title }}
+            </h3>
+
+            <div class="post-content">
+                {{ post.data.starter_content|truncatechars:250 }}
+            </div>
+
+            <div class="post-actions">
+
+                <span>
+                    Chapters:
+                    {{ post.data.contributions.count }}
+                </span>
+
+                <a href="{% url 'continue_story' post.data.id %}"
+                style="text-decoration:none;color:#4f46e5;font-weight:600;">
+                    Continue Story →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endif %}
     {% endfor %}
 
 </div>
