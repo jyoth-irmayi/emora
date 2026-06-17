@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .otp-wrapper {
+        width: 380px;
+        margin: 80px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .otp-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        text-align: center;
+        letter-spacing: 6px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .otp-input:focus {
+        border-color: #6366f1;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        background: #6366f1;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background: #4f46e5;
+    }
+
+    .error {
+        color: red;
+        font-size: 13px;
+        margin-top: 10px;
+    }
+
+    .resend {
+        margin-top: 15px;
+        font-size: 13px;
+    }
+
+    .resend a {
+        color: #6366f1;
+        text-decoration: none;
+    }
+
+    .resend a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="otp-wrapper">
+    
+    <h2>Verify OTP 🔐</h2>
+    <p>Enter the 6-digit code sent to your email</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input 
+            type="text" 
+            name="otp" 
+            maxlength="6"
+            class="otp-input"
+            placeholder="------"
+            required
+        >
+
+        <button type="submit" class="btn">Verify OTP</button>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </form>
+    <p>Time left: <span id="timer">300</span> sec</p>
+    
+    <div class="resend">
+        Didn’t receive OTP?
+        <a href="{% url 'resend_otp' %}" id="resend" style="display:none;">
+        Resend OTP
+        </a>
+    </div>
+
+</div>
+<script>
+let time = 300;
+let timer = document.getElementById("timer");
+let resend = document.getElementById("resend");
+
+let x = setInterval(() => {
+    time--;
+    timer.innerText = time;
+
+    if (time <= 0) {
+        clearInterval(x);
+        timer.innerText = "Expired";
+        resend.style.display = "inline";
+    }
+}, 1000);
+</script>
+
+{% endblock %}

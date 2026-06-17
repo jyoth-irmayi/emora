@@ -275,7 +275,7 @@
     <div class="tabs">
 
         <a href="{% url 'profile' %}"
-        class="tab {% if not current_type %}active{% endif %}" style="text-decoration: none;">
+        class="tab {% if not current_type and not tab  %}active{% endif %}" style="text-decoration: none;">
         All
         </a>
 
@@ -299,16 +299,84 @@
             Saved
         </a>
 
+        <a href="{% url 'profile' %}?tab=my_stories"
+        class="tab {% if tab == 'my_stories' %}active{% endif %}" style="text-decoration: none;">
+            📖 My Stories
+        </a>
+
     </div>
 
     <!-- POSTS GRID -->
     <div class="posts-grid">
+        {% if tab == "my_stories" %}
+
+    {% for story in stories %}
+
+    <div class="post-wrapper" style="position:relative;">
+
+        <!-- 3 DOT MENU -->
+        {% if story.created_by == request.user %}
+        <div class="menu-wrapper">
+
+            <button class="menu-btn" onclick="toggleMenu('story-{{ story.id }}')">
+                ⋮
+            </button>
+
+            <div class="menu-dropdown" id="menu-story-{{ story.id }}">
+
+                <button onclick="openEditStoryModal(
+                    {{ story.id }},
+                    '{{ story.title|default:''|escapejs }}',
+                    '{{ story.content|escapejs }}'
+                )">
+                    ✏️ Edit
+                </button>
+
+                <button onclick="deleteStory({{ story.id }})" style="color:red;">
+                    🗑️ Delete
+                </button>
+
+            </div>
+
+        </div>
+        {% endif %}
+
+        <!-- STORY CARD -->
+        <a href="{% url 'story_detail' story.id %}" style="text-decoration:none;color:inherit;">
+
+            <div class="post-box" style="border-left:4px solid #6366f1;">
+
+                <div class="post-type">📖 My Story</div>
+
+                {% if story.title %}
+                    <strong>{{ story.title }}</strong>
+                {% endif %}
+
+                <div class="post-text">
+                    {{ story.starter_content|truncatechars:180 }}
+                </div>
+
+                <div class="post-meta">
+                    <span>📚 Story Chain</span>
+                    <span>{{ story.created_at|date:'M d' }}</span>
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
 
     {% for post in posts %}
 
 <div class="post-wrapper" style="position:relative;">
 
     <!-- 3 DOT MENU -->
+    {% if tab != "saved" %}
     {% if post.user == request.user %}
     <div class="menu-wrapper">
 
@@ -334,6 +402,7 @@
         </div>
 
     </div>
+    {% endif %}
     {% endif %}
 
     <!-- POST CARD -->
@@ -400,6 +469,8 @@
 </div>
 
 {% endfor %}
+
+{% endif %}
 
 </div>
 </div>  <!-- closes posts-grid -->

@@ -8,6 +8,8 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from datetime import timedelta
 # Create your views here.
+
+@login_required
 def create_post(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -22,9 +24,7 @@ def create_post(request):
     
     return render(request,'posts/create_post.html')
 
-def edit_post(request):
-    return render(render,'posts/edit_post.html')
-
+@login_required
 def feed(request):
 
     post_type = request.GET.get('type')
@@ -82,7 +82,10 @@ def feed(request):
                 quote=winner_quote,
                 week_start=week_start
             )
-
+    saved_posts = set(
+        SavedPost.objects.filter(user=request.user)
+        .values_list('post_id', flat=True)
+    )
     return render(
         request,
         'posts/feed.html',
@@ -90,9 +93,12 @@ def feed(request):
             'feed_items': feed_items,
             'quote_of_week': quote_of_week,
             'current_type': post_type,
+            'saved_posts': saved_posts, 
         }
     )
 
+
+@login_required
 def like_post(request, post_id):
 
     post = get_object_or_404(
@@ -118,6 +124,8 @@ def like_post(request, post_id):
 
     return redirect(request.META.get('HTTP_REFERER', 'feed'))
 
+
+@login_required
 def comment_post(request,post_id):
     
     if request.method == 'POST':
@@ -128,6 +136,8 @@ def comment_post(request,post_id):
     return redirect(request.META.get('HTTP_REFERER', 'feed'))
 
 
+
+@login_required
 def delete_comment(request,id):
     comment=get_object_or_404(Comment,id=id,user=request.user)
     if comment:

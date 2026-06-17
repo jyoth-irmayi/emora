@@ -22,6 +22,8 @@ def create_story_chain(request):
         )    
     return render(request,'interactions/create_story_chain.html')
 
+
+@login_required
 def continue_story(request,story_id):
     story = get_object_or_404(
         StoryChain,
@@ -60,6 +62,8 @@ def continue_story(request,story_id):
         }
     )
 
+
+
 @login_required
 def story_detail(request,pk):
     story = get_object_or_404(
@@ -75,6 +79,8 @@ def story_detail(request,pk):
     })
 
 
+
+@login_required
 def start_chat(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -103,6 +109,8 @@ def start_chat(request, post_id):
     return redirect('chat_room', room_id=room.id)
 
 
+
+@login_required
 def chat_room(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
 
@@ -141,6 +149,8 @@ def chat_room(request, room_id):
         }
     )
 
+
+
 @login_required
 def notifications(request):
 
@@ -158,6 +168,7 @@ def notifications(request):
             "notifications": notifications,
         }
     )
+
 
 
 @login_required

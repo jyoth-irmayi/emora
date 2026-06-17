@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import MoodQuestion,MoodOption
+from django.contrib.auth.decorators import login_required
 from .audius_service import get_songs
 # Create your views here.
 def mood_test(request):

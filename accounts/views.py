@@ -1,9 +1,14 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import  login as auth_login,authenticate,logout
 from django.contrib.auth import get_user_model
+from .models import PasswordResetOTP
 from django.contrib.auth.decorators import login_required
 from posts.models import Post,SavedPost
+from interactions.models import StoryChain
 import random
+from datetime import timedelta
+from django.utils import timezone
+from django.core.mail import send_mail
 # Create your views here.
 
 User = get_user_model()
@@ -83,7 +88,105 @@ def login_view(request):
 
 
 def forgot_password(request):
-    return render(request,'accounts/forgot_password.html')
+    print('helloooo')
+    error = None
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+
+            otp_obj = PasswordResetOTP.objects.create(user=user)
+            print('hi',otp_obj.otp)
+            send_mail(
+                "Your Password Reset OTP",
+                f"Your OTP is {otp_obj.otp}",
+                "jyothirmayirani289@gmail.com",
+                [email],
+                fail_silently=False
+            )
+
+            request.session["reset_user_id"] = user.id
+            return redirect("verify_otp")
+
+        except User.DoesNotExist:
+            error = "Email not found"
+    return render(request,'accounts/forgot_password.html',{"error": error})
+
+
+def verify_otp(request):
+    user_id = request.session.get("reset_user_id")
+
+    if not user_id:
+        return redirect("forgot_password")
+    
+    user = User.objects.get(id=user_id)
+    otp_obj = PasswordResetOTP.objects.filter(user=user).last()
+
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp")
+
+        if otp_obj and timezone.now() > otp_obj.created_at + timedelta(minutes=5):
+            return render(request, "accounts/verify_otp.html", {
+                "error": "OTP expired. Please resend OTP."
+            })
+        if not otp_obj or otp_obj.otp != entered_otp:
+            return render(request, "accounts/verify_otp.html", {
+                "error": "Invalid OTP"
+            })
+        
+        return redirect("reset_password")
+    return render(request,'accounts/verify_otp.html')
+
+
+def resend_otp(request):
+    user_id = request.session.get("reset_user_id")
+    if not user_id:
+        return redirect("forgot_password")
+
+    user = User.objects.get(id=user_id)
+
+    # delete old OTP
+    PasswordResetOTP.objects.filter(user=user).delete()
+
+    # create new OTP
+    otp_obj = PasswordResetOTP.objects.create(user=user)
+
+    send_mail(
+        "Your New OTP",
+        f"Your OTP is {otp_obj.otp}",
+        "jyothirmayirani289@gmail.com",
+        [user.email],
+        fail_silently=False
+    )
+
+    return redirect("verify_otp")
+
+
+def reset_password(request):
+    user_id = request.session.get("reset_user_id")
+
+    if not user_id:
+        return redirect("forgot_password")
+
+    user = User.objects.get(id=user_id)
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            return render(request, "accounts/reset_password.html", {
+                "error": "Passwords do not match"
+            })
+
+        user.set_password(password)
+        user.save()
+
+        del request.session["reset_user_id"]
+
+        return redirect("login")
+
+    return render(request,'accounts/reset_password.html')
 
 
 def logout_view(request):
@@ -100,6 +203,9 @@ def profile(request):
     post_type = request.GET.get('type')
     tab = request.GET.get('tab')
     posts = Post.objects.filter(user=request.user).order_by('-created_at')
+
+    stories = None
+
     if post_type:
         posts = posts.filter(
             post_type=post_type
@@ -112,8 +218,14 @@ def profile(request):
 
         if post_type:
             posts = posts.filter(post_type=post_type)
+
+    if tab == "my_stories":
+        stories = StoryChain.objects.filter(
+            created_by=request.user
+        ).order_by('-created_at')
+
     
-    return render(request,'accounts/profile.html',{'user_data':user_data,'posts':posts,'current_type': post_type,'tab': tab})
+    return render(request,'accounts/profile.html',{'user_data':user_data,'posts':posts,'current_type': post_type,'tab': tab,'stories': stories})
 
 @login_required
 def edit_profile(request):
