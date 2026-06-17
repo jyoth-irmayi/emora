@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+.chat-wrapper{
+    max-width:600px;
+    margin:20px auto;
+    height:85vh;
+    display:flex;
+    flex-direction:column;
+    border-radius:15px;
+    background:white;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    overflow:hidden;
+}
+
+.chat-header{
+    padding:12px 15px;
+    background:#4f46e5;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.chat-user{
+    font-weight:600;
+    font-size:14px;
+}
+
+.chat-timer{
+    font-size:12px;
+}
+
+.chat-body{
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+    background:#f9fafb;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.message{
+    max-width:70%;
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.me{
+    align-self:flex-end;
+    background:#4f46e5;
+    color:white;
+}
+
+.them{
+    align-self:flex-start;
+    background:#e5e7eb;
+    color:#111;
+}
+
+.chat-input{
+    display:flex;
+    padding:10px;
+    border-top:1px solid #eee;
+    background:white;
+}
+
+.chat-input input{
+    flex:1;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+}
+
+.chat-input button{
+    margin-left:8px;
+    padding:10px 14px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.warning{
+    background:#fef3c7;
+    color:#92400e;
+    text-align:center;
+    padding:8px;
+    font-size:13px;
+    display:none;
+}
+
+.expired{
+    background:#fee2e2;
+    color:#991b1b;
+    text-align:center;
+    padding:10px;
+    display:none;
+}
+
+</style>
+
+<div class="chat-wrapper">
+
+    <div class="chat-header">
+
+        <div class="chat-user">
+            💬 {{ other_user.username }}
+        </div>
+
+        <div class="chat-timer" id="timer">
+            Loading...
+        </div>
+
+    </div>
+
+    <div class="warning" id="warning">
+        ⚠️ Chat will close in 1 minute
+    </div>
+
+    <div class="expired" id="expired">
+        ⛔ Chat expired
+    </div>
+
+    <div class="chat-body" id="chat-body">
+
+        {% for msg in messages %}
+
+            <div class="message {% if msg.sender == request.user %}me{% else %}them{% endif %}">
+                {{ msg.content }}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="chat-input">
+
+        <input
+            type="text"
+            id="message-input"
+            placeholder="Type a message..."
+            {% if not is_active %}disabled{% endif %}
+        >
+
+        <button type="button" onclick="sendMessage()" id="send-btn" {% if not is_active %}disabled{% endif %}>
+            Send
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const roomId = "{{ room.id }}";
+
+const username = "{{ request.user.username }}";
+const remainingSeconds =
+    {{ remaining_seconds }};
+const chatBody =
+    document.getElementById("chat-body");
+
+
+const chatSocket = new WebSocket(
+    "ws://"
+    + window.location.host
+    + "/ws/chat/"
+    + roomId
+    + "/"
+);
+
+chatSocket.onmessage = function(e){
+    console.log("CONNECTED");
+    const data = JSON.parse(e.data);
+    if(data.error){
+
+        document.getElementById(
+            "expired"
+        ).style.display = "block";
+
+        document.getElementById(
+            "message-input"
+        ).disabled = true;
+
+        document.getElementById(
+            "send-btn"
+        ).disabled = true;
+
+        return;
+    }
+    let div = document.createElement("div");
+
+    if(data.username === username){
+        div.className = "message me";
+    }
+    else{
+        div.className = "message them";
+    }
+
+    div.innerText = data.message;
+
+    chatBody.appendChild(div);
+
+    chatBody.scrollTop =
+        chatBody.scrollHeight;
+};
+
+function sendMessage(){
+    
+    let input =
+        document.getElementById(
+            "message-input"
+        );
+
+    let message =
+        input.value.trim();
+
+    if(message === ""){
+        return;
+    }
+
+    chatSocket.send(
+    
+        JSON.stringify({
+            message: message,
+            username: username
+        })
+    );
+
+    input.value = "";
+}
+
+document
+.getElementById("message-input")
+.addEventListener(
+    "keypress",
+    function(e){
+
+        if(e.key === "Enter"){
+
+            e.preventDefault();
+
+            sendMessage();
+        }
+    }
+);
+
+// =========================
+// CHAT COUNTDOWN
+// =========================
+// =========================
+// CHAT COUNTDOWN
+// =========================
+
+let timeLeft = remainingSeconds;
+
+const timer =
+    document.getElementById("timer");
+
+const warning =
+    document.getElementById("warning");
+
+const expired =
+    document.getElementById("expired");
+
+const countdown = setInterval(() => {
+
+    let minutes =
+        Math.floor(timeLeft / 60);
+
+    let seconds =
+        timeLeft % 60;
+
+    timer.innerText =
+        `${minutes}:${seconds
+            .toString()
+            .padStart(2, "0")}`;
+
+    // =====================
+    // SHOW WARNING
+    // =====================
+
+    if(timeLeft <= 60){
+        warning.style.display = "block";
+    }
+
+    // =====================
+    // CHAT EXPIRED
+    // =====================
+
+    if(timeLeft <= 0){
+
+        clearInterval(
+            countdown
+        );
+
+        expired.style.display =
+            "block";
+
+        document.getElementById(
+            "message-input"
+        ).disabled = true;
+
+        document.getElementById(
+            "send-btn"
+        ).disabled = true;
+
+        chatSocket.close();
+
+        return;
+    }
+
+    timeLeft--;
+
+},1000);
+</script>
+
+{% endblock %}

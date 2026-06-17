@@ -333,6 +333,19 @@
                     🔖 Save
                 {% endif %}
             </button>
+            <!-- 💬 CHAT BUTTON -->
+                <a href="{% url 'start_chat' post.id%}"
+                   onclick="event.stopPropagation();"
+                   style="
+                        text-decoration:none;
+                        background:#4f46e5;
+                        color:white;
+                        padding:6px 10px;
+                        border-radius:8px;
+                        font-size:12px;
+                   ">
+                    💬 Chat
+                </a>
         </div>
         <div class="comment-box"
             id="comment-{{ post.id }}">
@@ -422,6 +435,19 @@
                 <a href="{% url 'continue_story' post.data.id %}"
                 style="text-decoration:none;color:#4f46e5;font-weight:600;">
                     Continue Story →
+                </a>
+                <!-- 💬 CHAT BUTTON -->
+                <a href="{% url 'start_chat' post.data.id %}"
+                   onclick="event.stopPropagation();"
+                   style="
+                        text-decoration:none;
+                        background:#4f46e5;
+                        color:white;
+                        padding:6px 10px;
+                        border-radius:8px;
+                        font-size:12px;
+                   ">
+                    💬 Chat
                 </a>
 
             </div>
