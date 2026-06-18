@@ -9,6 +9,8 @@ import random
 from datetime import timedelta
 from django.utils import timezone
 from django.core.mail import send_mail
+from django.contrib import messages
+
 # Create your views here.
 
 User = get_user_model()
@@ -81,6 +83,10 @@ def login_view(request):
 
         if user is not None:
             auth_login(request,user)
+            messages.success(
+                request,
+                f"Successfully logged in as {user.username}"
+            )
             return redirect('home')
         else:
             return render(request,'accounts/login.html',{'errors':'ivalied email or password'})
@@ -88,7 +94,7 @@ def login_view(request):
 
 
 def forgot_password(request):
-    print('helloooo')
+  
     error = None
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -174,16 +180,36 @@ def reset_password(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
+        if not password:
+            messages.error(request, "Password is required.")
+            return redirect("reset_password")
+
+        if len(password) < 8:
+            messages.error(
+                request,
+                "Password must contain at least 8 characters."
+            )
+            return redirect("reset_password")
+        
         if password != confirm_password:
-            return render(request, "accounts/reset_password.html", {
-                "error": "Passwords do not match"
-            })
+            # return render(request, "accounts/reset_password.html", {
+            #     "error": "Passwords do not match"
+            # })
+            messages.error(
+                request,
+                "Passwords do not match."
+            )
+            return redirect("reset_password")
 
         user.set_password(password)
         user.save()
 
         del request.session["reset_user_id"]
 
+        messages.success(
+            request,
+            "Password reset successful. Please login."
+        )
         return redirect("login")
 
     return render(request,'accounts/reset_password.html')
@@ -230,11 +256,62 @@ def profile(request):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
+        username = request.POST.get('username', "").strip()
+        bio = request.POST.get('bio', "").strip()
+        avatar_color = request.POST.get("avatar_color")
+
+        if not username:
+            return render(
+                request,
+                "accounts/edit_profile.html",
+                {"error": "Username is required."}
+            )
+
+        if len(username) < 3:
+            return render(
+                request,
+                "accounts/edit_profile.html",
+                {"error": "Username must be at least 3 characters."}
+            )
+
+        if len(username) > 30:
+            return render(
+                request,
+                "accounts/edit_profile.html",
+                {"error": "Username cannot exceed 30 characters."}
+            )
+
+        if User.objects.exclude(
+            id=request.user.id
+        ).filter(
+            username__iexact=username
+        ).exists():
+
+            return render(
+                request,
+                "accounts/edit_profile.html",
+                {"error": "Username already exists."}
+            )
+
+        if len(bio) > 250:
+            return render(
+                request,
+                "accounts/edit_profile.html",
+                {"error": "Bio cannot exceed 250 characters."}
+            )
+
+        # Save only after validation passes
         user = request.user
-        user.username = request.POST.get('username')
-        user.bio = request.POST.get('bio')
-        user.avatar_color = request.POST.get("avatar_color")
+        user.username = username
+        user.bio = bio
+        user.avatar_color = avatar_color
         user.save()
+
+        messages.success(
+            request,
+            "Profile updated successfully!"
+        )
+
         return redirect('profile')
     return render(request,'accounts/edit_profile.html')
 

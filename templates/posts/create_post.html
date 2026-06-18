@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% if messages %}
+    {% for message in messages %}
+
+    <div id="successPopup" class="success-popup">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h3>Welcome Back</h3>
+
+        <p>{{ message }}</p>
+
+    </div>
+
+    {% endfor %}
+{% endif %}
 <style>
 
 /* =========================
@@ -194,6 +211,47 @@ textarea{
 .post-btn:hover{
     background:#3730a3;
 }
+.success-popup{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    min-width:450px;
+    max-width:600px;
+    padding:14px 25px;
+    background:white;
+    border-left:5px solid #16a34a;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    z-index:9999;
+    animation:slideDown .3s ease;
+}
+
+.success-icon{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#dcfce7;
+    color:#16a34a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+@keyframes slideDown{
+    from{
+        opacity:0;
+        transform:translate(-50%,-20px);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,0);
+    }
+}
 
 </style>
 
@@ -220,7 +278,20 @@ textarea{
     <input type="hidden" name="mood" id="mood" value="healing">
 
     <div class="form-card">
-
+        {% if error %}
+            <span style="
+                display:block;
+                margin-bottom:15px;
+                padding:12px;
+                background:#fef2f2;
+                color:#dc2626;
+                border:1px solid #fecaca;
+                border-radius:10px;
+                font-size:14px;
+            ">
+                {{ error }}
+            </span>
+        {% endif %}
         <input type="text" id="title" name="title" placeholder="Title (optional)">
 
         <textarea id="content" name="content" placeholder="Write your quote..."></textarea>
@@ -381,6 +452,22 @@ function setMood(mood, event){
 
     document.getElementById('mood').value = mood;
 }
+
+</script>
+<script>
+
+setTimeout(function(){
+
+    let popup =
+        document.getElementById(
+            "successPopup"
+        );
+
+    if(popup){
+        popup.remove();
+    }
+
+},3000);
 
 </script>
 

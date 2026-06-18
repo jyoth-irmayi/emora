@@ -119,9 +119,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             receiver = room.user1
 
-        Notification.objects.create(
+        notification = Notification.objects.filter(
             receiver=receiver,
             sender_id=sender_id,
             room=room,
-            message="Someone sent you a new message 💬"
-        )
+            is_read=False
+        ).first()
+
+        if notification:
+
+            notification.message = "Someone sent you a new message 💬"
+            notification.is_read = False
+            notification.updated_at = timezone.now()
+            notification.save()
+
+        else:
+            Notification.objects.create(
+                receiver=receiver,
+                sender_id=sender_id,
+                room=room,
+                message="Someone sent you a new message 💬"
+            )

@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'posts',
     'interactions',
     'moods',
-    'community',
     'channels',
 ]
 

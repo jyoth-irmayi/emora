@@ -18,6 +18,11 @@
 
 .unread{
     border-left:4px solid #4f46e5;
+    background:#eef2ff;
+}
+
+.unread .notification-message{
+    font-weight:700;
 }
 
 .notification-link{
@@ -55,19 +60,55 @@
             href="{% url 'open_notification' notification.id %}"
             class="notification-link"
         >
+        <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
 
-            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+            <div style="display:flex;align-items:center;gap:12px;">
 
-                <div class="notification-message">
-                    {{ notification.message }}
+                <!-- Profile Avatar -->
+                <div
+                    style="
+                        width:45px;
+                        height:45px;
+                        border-radius:50%;
+                        background:{{ notification.sender.avatar_color }};
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:white;
+                        font-weight:bold;
+                        font-size:15px;
+                        flex-shrink:0;
+                    ">
+                    {{ notification.sender.get_initials }}
                 </div>
 
-                <div class="notification-time">
-                    {{ notification.created_at|timesince }} ago
+                <!-- Username + Message -->
+                <div style="flex:1;">
+
+                    <div class="notification-message">
+
+                        {% if not notification.is_read %}
+                            <span style="
+                                color:#4f46e5;
+                                font-size:12px;
+                                margin-right:6px;
+                            ">●</span>
+                        {% endif %}
+
+                        <strong>{{ notification.sender.username }}</strong>
+                        {{ notification.message }}
+
+                    </div>
+
+                    <div class="notification-time">
+                        {{ notification.created_at|timesince }} ago
+                    </div>
+
                 </div>
 
             </div>
 
+        </div>
         </a>
 
     {% empty %}

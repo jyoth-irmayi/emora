@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib import messages
+
 # Create your views here.
 
 @login_required
@@ -19,7 +21,98 @@ def create_post(request):
         background = request.POST.get('background')
         is_anonymous = request.POST.get('is_anonymous') == 'on'
 
+        if len(title) > 100:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Title cannot exceed 100 characters.'
+                }
+            )
+        
+        if not content:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Content is required.'
+                }
+            )
+
+        if len(content) < 5:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Content must be at least 5 characters.'
+                }
+            )
+
+        if len(content) > 5000:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Content cannot exceed 5000 characters.'
+                }
+            )
+
+        valid_types = [
+            'quote',
+            'poem',
+            'story'
+        ]
+
+        if post_type not in valid_types:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Invalid post type.'
+                }
+            )
+        
+        valid_moods = [
+            'healing',
+            'sad',
+            'motivated',
+            'calm',
+            'lonely'
+        ]
+
+        if mood not in valid_moods:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Invalid mood selected.'
+                }
+            )
+        
+        valid_backgrounds = [
+            'bg1',
+            'bg2',
+            'bg3',
+            'bg4'
+        ]
+
+        if background not in valid_backgrounds:
+            return render(
+                request,
+                'posts/create_post.html',
+                {
+                    'error': 'Invalid background selected.'
+                }
+            )
+
+
         Post.objects.create(user=request.user,title=title,content=content,post_type=post_type,mood=mood,background=background,is_anonymous=is_anonymous)
+        
+        messages.success(
+            request,
+            "Post created successfully!"
+        )
+
         return redirect('create_post')
     
     return render(request,'posts/create_post.html')

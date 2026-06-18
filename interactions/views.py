@@ -45,7 +45,7 @@ def continue_story(request,story_id):
             )
 
         return redirect(
-            'post_detail',
+            'continue_story',
             story_id=story.id
         )
 
@@ -156,11 +156,12 @@ def notifications(request):
 
     notifications = (
         request.user.notifications
-        .order_by("-created_at")
+        .order_by("-updated_at")
     )
-    notifications.filter(
-        is_read=False
-    ).update(is_read=True)
+    # notifications.filter(
+    #     is_read=False
+    # ).update(is_read=True)
+
     return render(
         request,
         "interactions/notifications.html",

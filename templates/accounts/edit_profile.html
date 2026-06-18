@@ -88,7 +88,15 @@
     font-size:24px;
     font-weight:600;
 }
-
+.error-box{
+    background:#fef2f2;
+    color:#dc2626;
+    border:1px solid #fecaca;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-size:14px;
+}
 </style>
 
 <div class="edit-profile-container">
@@ -113,6 +121,11 @@
             {{ user.get_initials }}
 
         </div>
+        {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+        {% endif %}
 
         <form method="POST">
             {% csrf_token %}
