@@ -231,7 +231,18 @@ def profile(request):
     posts = Post.objects.filter(user=request.user).order_by('-created_at')
 
     stories = None
+    
+    total_posts = Post.objects.filter(
+        user=request.user
+    ).count()
 
+    saved_posts_count = Post.objects.filter(
+        saved_posts__user=request.user
+    ).count()
+
+    story_count = StoryChain.objects.filter(
+        created_by=request.user
+    ).count()
     if post_type:
         posts = posts.filter(
             post_type=post_type
@@ -251,7 +262,9 @@ def profile(request):
         ).order_by('-created_at')
 
     
-    return render(request,'accounts/profile.html',{'user_data':user_data,'posts':posts,'current_type': post_type,'tab': tab,'stories': stories})
+    return render(request,'accounts/profile.html',{'user_data':user_data,'posts':posts,'current_type': post_type,'tab': tab,'stories': stories,'total_posts': total_posts,
+            'saved_posts_count': saved_posts_count,
+            'story_count': story_count,})
 
 @login_required
 def edit_profile(request):
