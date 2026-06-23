@@ -2,124 +2,385 @@
 {% block content %}
 
 <style>
-
-/* ================= WRAPPER ================= */
-
-.quiz-wrapper{
-    max-width:700px;
-    margin:50px auto;
-    padding:20px;
+/* ================= PAGE LAYOUT ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* ================= HEADER ================= */
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1a2942 50%, #2d1b69 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    position: relative;
+}
+.quiz-layout{
+    max-width:1400px;
+    margin:40px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:260px minmax(700px,850px) 260px;
+
+    gap:30px;
+
+    align-items:start;
+
+    position:relative;
+    z-index:2;
+}
+
+.quiz-wrapper{
+    width:100%;
+}
+
+/* ================= SIDEBARS ================= */
+
+.left-sidebar,
+.right-sidebar{
+
+    position:sticky;
+    top:120px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.sidebar-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    color:white;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.15);
+}
+
+.sidebar-card h3,
+.sidebar-card h4{
+
+    margin-bottom:12px;
+    color:#c7d2fe;
+}
+
+.sidebar-card p{
+
+    font-size:14px;
+    line-height:1.8;
+    color:rgba(255,255,255,.75);
+}
+
+/* ================= HERO ================= */
 
 .quiz-header{
+
     text-align:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(79,70,229,.95),
+        rgba(124,58,237,.95)
+    );
+
+    color:white;
+
+    padding:45px 35px;
+
+    border-radius:28px;
+
     margin-bottom:25px;
+
+    box-shadow:
+    0 15px 40px rgba(79,70,229,.25);
 }
 
 .quiz-header h2{
-    font-size:28px;
-    margin:0;
+
+    font-size:36px;
+
+    font-weight:800;
+
+    margin-bottom:12px;
 }
 
 .quiz-header p{
-    color:#777;
+
+    color:rgba(255,255,255,.9);
+
+    font-size:16px;
+
+    line-height:1.8;
 }
 
 /* ================= QUESTION CARD ================= */
 
 .question-card{
+
     background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.06);
-    margin-bottom:15px;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    margin-bottom:18px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.question-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
 }
 
 .question-card h3{
-    font-size:15px;
-    margin-bottom:12px;
+
+    font-size:18px;
+
+    color:#111827;
+
+    margin-bottom:18px;
+
+    line-height:1.6;
 }
 
 /* ================= OPTIONS ================= */
 
 .option{
-    display:block;
-    padding:10px 12px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    margin-bottom:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    border:2px solid #eef2ff;
+
+    border-radius:14px;
+
+    margin-bottom:12px;
+
     cursor:pointer;
-    transition:0.2s;
-    font-size:14px;
+
+    transition:.3s;
+
+    font-size:15px;
+
+    background:#fafbff;
 }
 
 .option:hover{
-    background:#f5f7ff;
-    border-color:#4f46e5;
+
+    border-color:#6366f1;
+
+    background:#eef2ff;
+
+    transform:translateX(5px);
 }
 
-/* ================= SUBMIT BUTTON ================= */
+.option input{
+
+    accent-color:#4f46e5;
+
+    width:18px;
+    height:18px;
+}
+
+/* ================= BUTTON ================= */
 
 .submit-btn{
+
     width:100%;
-    padding:12px;
-    background:#4f46e5;
-    color:white;
+
+    padding:16px;
+
+    margin-top:25px;
+
     border:none;
-    border-radius:10px;
-    font-size:15px;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:700;
+
     cursor:pointer;
-    font-weight:600;
-    margin-top:10px;
+
+    transition:.3s;
+
+    box-shadow:
+    0 10px 25px rgba(79,70,229,.25);
 }
 
 .submit-btn:hover{
-    background:#3730a3;
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 15px 35px rgba(79,70,229,.35);
 }
 
-/* ================= SMALL NOTE ================= */
+/* ================= NOTE ================= */
 
 .note{
+
     text-align:center;
-    font-size:12px;
-    color:#888;
-    margin-top:15px;
+
+    margin-top:20px;
+
+    color:white;
+
+    font-size:13px;
+
+    opacity:.8;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1200px){
+
+    .quiz-layout{
+
+        grid-template-columns:1fr;
+
+        max-width:850px;
+    }
+
+    .left-sidebar,
+    .right-sidebar{
+
+        display:none;
+    }
+}
+
+@media(max-width:768px){
+
+    .quiz-header{
+
+        padding:30px 20px;
+    }
+
+    .quiz-header h2{
+
+        font-size:28px;
+    }
+
+    .question-card{
+
+        padding:18px;
+    }
+
+    .option{
+
+        font-size:14px;
+    }
 }
 
 </style>
+<div class="quiz-layout">
 
-<div class="quiz-wrapper">
+    <aside class="left-sidebar">
 
-    <!-- HEADER -->
-    <div class="quiz-header">
-        <h2>🎵 Mood Detector</h2>
-        <p>Tell us how you feel — we’ll recommend music for your emotion</p>
+        <div class="sidebar-card">
+            <h3>🎵 Music Therapy</h3>
+
+            <p>
+                Music has the power to calm, heal, inspire and comfort.
+            </p>
+        </div>
+
+        <div class="sidebar-card">
+            <h4>🌿 EMORA</h4>
+
+            <p>
+                Discover songs that match your emotions.
+            </p>
+        </div>
+
+    </aside>
+
+    <div class="quiz-wrapper">
+
+            <!-- HEADER -->
+            <div class="quiz-header">
+                <h2>🎵 Mood Detector</h2>
+                <p>Tell us how you feel — we’ll recommend music for your emotion</p>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                {% for question in questions%}
+            <!-- QUESTION 1 -->
+            <div class="question-card">
+
+                <h3>{{question.question}}</h3>
+                {% for option in question.options.all %}
+
+                <label class="option">
+                    <input type="radio" name="question_{{ question.id }}" value="{{ option.id }}" required>
+                    {{ option.option_text }}
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <!-- SUBMIT -->
+            <button class="submit-btn">Get My Music</button>
+            </form>
+            <div class="note">
+                Your mood helps us personalize your experience
+            </div>
+
     </div>
-    <form method="POST">
-        {% csrf_token %}
-        {% for question in questions%}
-    <!-- QUESTION 1 -->
-    <div class="question-card">
+        <aside class="right-sidebar">
 
-        <h3>{{question.question}}</h3>
-        {% for option in question.options.all %}
+            <div class="sidebar-card">
 
-        <label class="option">
-            <input type="radio" name="question_{{ question.id }}" value="{{ option.id }}" required>
-            {{ option.option_text }}
-        </label>
-        {% endfor %}
-    </div>
-    {% endfor %}
+                <h4>✨ Why This Quiz?</h4>
 
-    <!-- SUBMIT -->
-    <button class="submit-btn">Get My Music</button>
-    </form>
-    <div class="note">
-        Your mood helps us personalize your experience
-    </div>
+                <p>
+                    Your answers help us understand your emotional state and recommend music that resonates with you.
+                </p>
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h4>🎧 Recommendation</h4>
+
+                <p>
+                    Answer honestly for the most meaningful playlist.
+                </p>
+
+            </div>
+
+        </aside>
 
 </div>
 

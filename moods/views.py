@@ -3,6 +3,8 @@ from .models import MoodQuestion,MoodOption
 from django.contrib.auth.decorators import login_required
 from .audius_service import get_songs
 # Create your views here.
+
+@login_required
 def mood_test(request):
     questions = MoodQuestion.objects.prefetch_related('options')
     if request.method == "POST":
@@ -36,5 +38,6 @@ def mood_test(request):
         )
     return render(request,'moods/mood_test.html',{'questions':questions})
 
+@login_required
 def recommended_music(request):
     return render(request,'moods/mood_result.html')

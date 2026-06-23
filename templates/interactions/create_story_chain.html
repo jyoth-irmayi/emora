@@ -2,145 +2,402 @@
 {% block content %}
 
 <style>
+/* ================= GLOBAL ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1a2942 50%, #2d1b69 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    position: relative;
+}
+.story-layout{
+    max-width:1400px;
+    margin:40px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:260px minmax(700px,850px) 260px;
+
+    gap:30px;
+
+    align-items:start;
+
+    position:relative;
+    z-index:2;
+}
+
+/* ================= SIDEBARS ================= */
+
+.left-sidebar,
+.right-sidebar{
+
+    position:sticky;
+    top:90px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.sidebar-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    color:white;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.15);
+}
+
+.sidebar-card h3,
+.sidebar-card h4{
+
+    margin-bottom:12px;
+
+    color:#c7d2fe;
+}
+
+.sidebar-card p{
+
+    font-size:14px;
+    line-height:1.8;
+
+    color:rgba(255,255,255,.8);
+}
+
+/* ================= WRAPPER ================= */
 
 .story-wrapper{
-    max-width:700px;
-    margin:40px auto;
-    padding:20px;
+    width:100%;
 }
+
+/* ================= CARD ================= */
 
 .story-card{
-    background:white;
-    border-radius:16px;
-    padding:25px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.06);
+
+    background:rgba(255,255,255,.97);
+
+    border-radius:28px;
+
+    padding:35px;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.12);
 }
 
+/* ================= HEADER ================= */
+
 .story-title{
+
     text-align:center;
+
+    padding-bottom:25px;
+
     margin-bottom:25px;
+
+    border-bottom:1px solid #eef2ff;
 }
 
 .story-title h2{
-    margin:0;
+
+    font-size:34px;
+
+    font-weight:800;
+
     color:#4f46e5;
+
+    margin-bottom:10px;
 }
 
 .story-title p{
-    color:#777;
-    font-size:14px;
-    margin-top:5px;
+
+    color:#6b7280;
+
+    font-size:15px;
+
+    line-height:1.8;
 }
 
+/* ================= TIP BOX ================= */
+
+.tip-box{
+
+    background:
+    linear-gradient(
+        135deg,
+        #eef2ff,
+        #ede9fe
+    );
+
+    border-left:5px solid #4f46e5;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    margin-bottom:25px;
+
+    font-size:14px;
+
+    color:#4b5563;
+
+    line-height:1.8;
+}
+
+/* ================= FORM ================= */
+
 .form-group{
-    margin-bottom:18px;
+    margin-bottom:24px;
 }
 
 .form-group label{
+
     display:block;
-    margin-bottom:8px;
-    font-weight:600;
-    color:#333;
+
+    margin-bottom:10px;
+
+    font-weight:700;
+
+    color:#111827;
 }
 
 .form-group input,
 .form-group textarea{
+
     width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    font-size:14px;
-    outline:none;
+
+    padding:15px;
+
+    border:2px solid #e5e7eb;
+
+    border-radius:14px;
+
+    font-size:15px;
+
+    transition:.3s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus{
-    border-color:#4f46e5;
+
+    outline:none;
+
+    border-color:#6366f1;
+
+    box-shadow:
+    0 0 0 4px rgba(99,102,241,.1);
 }
 
 .form-group textarea{
-    min-height:220px;
+
+    min-height:260px;
+
     resize:vertical;
-    line-height:1.6;
+
+    line-height:1.9;
 }
 
-.tip-box{
-    background:#eef2ff;
-    border-radius:10px;
-    padding:12px;
-    font-size:13px;
-    color:#555;
-    margin-bottom:20px;
-}
+/* ================= BUTTON ================= */
 
 .publish-btn{
+
     width:100%;
-    padding:14px;
+
+    padding:16px;
+
     border:none;
-    border-radius:10px;
-    background:#4f46e5;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+
     color:white;
-    font-size:15px;
+
+    font-size:17px;
+
+    font-weight:700;
+
     cursor:pointer;
-    transition:0.3s;
+
+    transition:.3s;
+
+    box-shadow:
+    0 10px 25px rgba(79,70,229,.25);
 }
 
 .publish-btn:hover{
-    opacity:0.9;
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 15px 35px rgba(79,70,229,.35);
 }
 
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1200px){
+
+    .story-layout{
+
+        grid-template-columns:1fr;
+
+        max-width:850px;
+    }
+
+    .left-sidebar,
+    .right-sidebar{
+
+        display:none;
+    }
+}
+
+@media(max-width:768px){
+
+    .story-card{
+
+        padding:22px;
+    }
+
+    .story-title h2{
+
+        font-size:28px;
+    }
+
+    .form-group textarea{
+
+        min-height:220px;
+    }
+}
 </style>
 
-<div class="story-wrapper">
+<div class="story-layout">
 
-    <div class="story-card">
+    <aside class="left-sidebar">
 
-        <div class="story-title">
-            <h2>📚 Start a Continue Story</h2>
-            <p>Write the beginning. Others will continue it.</p>
+        <div class="sidebar-card">
+
+            <h3>📖 Story Tips</h3>
+
+            <p>
+                Leave mystery, suspense, or unanswered questions so others can continue naturally.
+            </p>
+
         </div>
 
-        <div class="tip-box">
-            ✨ Write an interesting opening. Leave room for others to continue the story.
+        <div class="sidebar-card">
+
+            <h4>✨ Good Stories</h4>
+
+            <p>
+                Start small. A single moment can become an unforgettable journey.
+            </p>
+
         </div>
 
-        <form method="POST">
+    </aside>
 
-            {% csrf_token %}
+    <div class="story-wrapper">
+        <div class="story-card">
 
-            <div class="form-group">
-                <label>Story Title</label>
+            <div class="story-title">
 
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Example: The Last Train"
-                    required
-                >
+                <h2>📚 Create a Story Chain</h2>
+
+                <p>
+                    Begin a story and let the EMORA community continue the adventure.
+                </p>
+
             </div>
 
-            <div class="form-group">
-                <label>Beginning of the Story</label>
+            <div class="tip-box">
 
-                <textarea
-                    name="starter_content"
-                    placeholder="The train arrived at midnight, but nobody got off..."
-                    required
-                ></textarea>
+                ✨ Write an engaging opening scene, introduce a mystery, challenge,
+                or emotional moment, and leave space for the next writer to continue.
+
             </div>
 
-            <button
-                type="submit"
-                class="publish-btn">
+            <form method="POST">
 
-                🚀 Publish Story
+                {% csrf_token %}
 
-            </button>
+                <div class="form-group">
+                    <label>Story Title</label>
 
-        </form>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Example: The Last Train"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Beginning of the Story</label>
+
+                    <textarea
+                        name="starter_content"
+                        placeholder="The train arrived at midnight, but nobody got off..."
+                        required
+                    ></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="publish-btn">
+
+                    🚀 Publish Story
+
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
+    <aside class="right-sidebar">
+
+        <div class="sidebar-card">
+
+            <h4>🌿 EMORA Writing</h4>
+
+            <p>
+                Every story begins with one sentence.
+            </p>
+
+        </div>
+
+        <div class="sidebar-card">
+
+            <h4>🔥 Inspiration</h4>
+
+            <p>
+                "The door opened slowly, but nobody expected who was standing there."
+            </p>
+
+        </div>
+
+    </aside>
 
 </div>
+</div>
+
 
 {% endblock %}

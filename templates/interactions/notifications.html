@@ -2,122 +2,393 @@
 {% block content %}
 
 <style>
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1a2942 50%, #2d1b69 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    position: relative;
+}
+/* ================= GLOBAL ================= */
+
+.notifications-layout{
+    max-width:1400px;
+    margin:40px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:260px minmax(650px,850px) 260px;
+    gap:30px;
+
+    position:relative;
+    z-index:2;
+}
+
+/* ================= SIDEBARS ================= */
+
+.left-sidebar,
+.right-sidebar{
+
+    position:sticky;
+    top:90px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.sidebar-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    color:white;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.15);
+}
+
+.sidebar-card h3,
+.sidebar-card h4{
+
+    margin-bottom:12px;
+
+    color:#c7d2fe;
+}
+
+.sidebar-card p{
+
+    color:rgba(255,255,255,.85);
+
+    line-height:1.8;
+
+    font-size:14px;
+}
+
+/* ================= MAIN CONTENT ================= */
 
 .notifications-wrapper{
-    max-width:700px;
-    margin:30px auto;
+    width:100%;
 }
 
-.notification-card{
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:10px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+.page-header{
+
+    background:rgba(255,255,255,.95);
+
+    border-radius:24px;
+
+    padding:20px;
+
+    margin-bottom:25px;
+
+    text-align:center;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.1);
 }
 
-.unread{
-    border-left:4px solid #4f46e5;
-    background:#eef2ff;
+.page-header h2{
+
+    font-size:30px;
+
+    color:#111827;
+
+    margin-bottom:8px;
 }
 
-.unread .notification-message{
-    font-weight:700;
+.page-header p{
+
+    color:#6b7280;
 }
+
+/* ================= NOTIFICATION CARD ================= */
 
 .notification-link{
     text-decoration:none;
     color:inherit;
     display:block;
+    margin-top: 20px;
+}
+
+.notification-card{
+
+    background:white;
+
+    padding:18px;
+
+    border-radius:22px;
+
+    margin-bottom:14px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    border:1px solid #eef2f7;
+}
+
+.notification-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
+}
+
+.unread{
+
+    border-left:5px solid #6366f1;
+
+    background:
+    linear-gradient(
+        135deg,
+        #eef2ff,
+        #ffffff
+    );
 }
 
 .notification-message{
-    font-size:14px;
-    font-weight:500;
+
+    font-size:15px;
+
+    color:#111827;
+
+    line-height:1.7;
+}
+
+.unread .notification-message{
+
+    font-weight:700;
 }
 
 .notification-time{
+
+    color:#6b7280;
+
     font-size:12px;
-    color:#777;
-    margin-top:5px;
+
+    margin-top:6px;
 }
 
+/* ================= AVATAR ================= */
+
+.avatar{
+
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    font-weight:700;
+
+    font-size:16px;
+
+    flex-shrink:0;
+
+    box-shadow:
+    0 5px 15px rgba(0,0,0,.15);
+}
+
+/* ================= EMPTY STATE ================= */
+
 .empty{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:60px;
+
     text-align:center;
-    padding:40px;
-    color:#777;
+
+    color:#6b7280;
+
+    font-size:16px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1200px){
+
+    .notifications-layout{
+
+        grid-template-columns:1fr;
+
+        max-width:900px;
+    }
+
+    .left-sidebar,
+    .right-sidebar{
+
+        display:none;
+    }
+}
+
+@media(max-width:768px){
+
+    .page-header{
+
+        padding:22px;
+    }
+
+    .page-header h2{
+
+        font-size:28px;
+    }
+
+    .notification-card{
+
+        padding:15px;
+    }
 }
 
 </style>
 
-<div class="notifications-wrapper">
+<div class="notifications-layout">
 
-    <h2>🔔 Notifications</h2>
+    <aside class="left-sidebar">
 
-    {% for notification in notifications %}
+        <div class="sidebar-card">
 
-        <a
-            href="{% url 'open_notification' notification.id %}"
-            class="notification-link"
-        >
-        <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+            <div class="page-header">
 
-            <div style="display:flex;align-items:center;gap:12px;">
+                <h2>🔔 Notifications</h2>
 
-                <!-- Profile Avatar -->
-                <div
-                    style="
-                        width:45px;
-                        height:45px;
-                        border-radius:50%;
-                        background:{{ notification.sender.avatar_color }};
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        color:white;
-                        font-weight:bold;
-                        font-size:15px;
-                        flex-shrink:0;
-                    ">
-                    {{ notification.sender.get_initials }}
-                </div>
+                <p>
+                    Keep track of your latest activity and interactions.
+                </p>
 
-                <!-- Username + Message -->
-                <div style="flex:1;">
+            </div>
 
-                    <div class="notification-message">
+            <p>
+                Stay updated with likes, comments,
+                chats and story contributions.
+            </p>
 
-                        {% if not notification.is_read %}
-                            <span style="
-                                color:#4f46e5;
-                                font-size:12px;
-                                margin-right:6px;
-                            ">●</span>
-                        {% endif %}
+        </div>
 
-                        <strong>{{ notification.sender.username }}</strong>
-                        {{ notification.message }}
+        <div class="sidebar-card">
 
+            <h4>🌿 EMORA Community</h4>
+
+            <p>
+                Every interaction helps build a
+                supportive community.
+            </p>
+
+        </div>
+
+    </aside>
+
+    <div class="notifications-wrapper">
+
+        <h2>🔔 Notifications</h2>
+
+        {% for notification in notifications %}
+
+            <a
+                href="{% url 'open_notification' notification.id %}"
+                class="notification-link"
+            >
+            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+
+                <div style="display:flex;align-items:center;gap:12px;">
+
+                    <!-- Profile Avatar -->
+                    <div
+                        class="avatar"
+                        style="background:{{ notification.sender.avatar_color }};">
+                        {{ notification.sender.get_initials }}
                     </div>
 
-                    <div class="notification-time">
-                        {{ notification.created_at|timesince }} ago
+                    <!-- Username + Message -->
+                    <div style="flex:1;">
+
+                        <div class="notification-message">
+
+                            {% if not notification.is_read %}
+                                <span style="
+                                    color:#4f46e5;
+                                    font-size:12px;
+                                    margin-right:6px;
+                                ">●</span>
+                            {% endif %}
+
+                            <strong>{{ notification.sender.username }}</strong>
+                            {{ notification.message }}
+
+                        </div>
+
+                        <div class="notification-time">
+                            {{ notification.created_at|timesince }} ago
+                        </div>
+
                     </div>
 
                 </div>
 
             </div>
+            </a>
 
-        </div>
-        </a>
+        {% empty %}
 
-    {% empty %}
+            <div class="empty">
 
-        <div class="empty">
-            No notifications yet 🔕
-        </div>
+                <h3 style="margin-bottom:12px;">
+                    🔕 No Notifications Yet
+                </h3>
 
-    {% endfor %}
+                <p>
+                    When someone likes, comments,
+                    starts a chat, or contributes to
+                    your stories, you'll see it here.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+    <aside class="right-sidebar">
+
+    <div class="sidebar-card">
+
+        <h4>✨ Activity</h4>
+
+        <p>
+            New likes, comments and messages
+            will appear instantly.
+        </p>
+
+    </div>
+
+    <div class="sidebar-card">
+
+        <h4>📖 Story Updates</h4>
+
+        <p>
+            Track new continuations added
+            to your collaborative stories.
+        </p>
+
+    </div>
+
+</aside>
 
 </div>
 

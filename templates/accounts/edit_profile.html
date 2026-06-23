@@ -2,54 +2,181 @@
 {% block content %}
 
 <style>
-
-.edit-profile-container{
-    max-width:600px;
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1a2942 50%, #2d1b69 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    position: relative;
+}
+.edit-profile-layout{
+    max-width:1400px;
     margin:40px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:260px minmax(600px,750px) 260px;
+
+    gap:30px;
+
+    position:relative;
+    z-index:2;
+}
+.left-sidebar,
+.right-sidebar{
+
+    position:sticky;
+    top:90px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.sidebar-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:20px;
+
     padding:20px;
+
+    color:white;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.15);
+}
+
+.sidebar-card h3,
+.sidebar-card h4{
+
+    margin-bottom:12px;
+
+    color:#c7d2fe;
+}
+
+.sidebar-card p{
+
+    font-size:14px;
+
+    line-height:1.8;
+
+    color:rgba(255,255,255,.85);
 }
 
 .edit-card{
-    background:white;
-    padding:30px;
-    border-radius:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
+    background:rgba(255,255,255,.97);
+
+    padding:35px;
+
+    border-radius:28px;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.12);
+
+    border:1px solid rgba(255,255,255,.3);
 }
 
 .edit-card h2{
-    margin-bottom:20px;
-}
 
+    text-align:center;
+
+    margin-bottom:30px;
+
+    font-size:32px;
+
+    font-weight:800;
+
+    color:#111827;
+}
 .form-group{
-    margin-bottom:15px;
+    margin-bottom:22px;
 }
 
 .form-group label{
+
     display:block;
-    margin-bottom:6px;
+
+    margin-bottom:8px;
+
     font-weight:600;
-    color:#333;
+
+    color:#374151;
 }
 
 .form-group input,
 .form-group textarea{
+
     width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:10px;
+
+    padding:14px 16px;
+
+    border:1px solid #dbe2ea;
+
+    border-radius:14px;
+
     outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+
+    border-color:#6366f1;
+
+    box-shadow:
+    0 0 0 4px rgba(99,102,241,.12);
 }
 
 .form-group textarea{
+
+    min-height:120px;
+
     resize:none;
-    height:100px;
+}
+.color-picker{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    margin-top:15px;
 }
 
-.color-picker{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-top:10px;
+.color-box{
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    border:3px solid transparent;
+}
+
+.color-box:hover{
+
+    transform:scale(1.12);
+}
+
+.color-box.active{
+
+    border:3px solid white;
+
+    box-shadow:
+    0 0 0 3px #4f46e5;
 }
 
 .color-box{
@@ -65,28 +192,65 @@
 }
 
 .save-btn{
+
     width:100%;
-    padding:12px;
+
+    padding:15px;
+
     border:none;
-    background:#4f46e5;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+
     color:white;
-    border-radius:10px;
-    font-weight:600;
+
+    font-size:16px;
+
+    font-weight:700;
+
     cursor:pointer;
-    margin-top:10px;
+
+    margin-top:15px;
+
+    transition:.3s;
 }
 
-.preview-avatar{
-    width:80px;
-    height:80px;
+.save-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 12px 30px rgba(79,70,229,.35);
+}
+.profile-pic{
+
+    width:140px !important;
+    height:140px !important;
+
+    margin:0 auto 25px auto;
+
     border-radius:50%;
-    margin:10px auto;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
+    font-size:52px !important;
+
+    font-weight:700;
+
     color:white;
-    font-size:24px;
-    font-weight:600;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.18);
+
+    transition:.3s;
 }
 .error-box{
     background:#fef2f2;
@@ -97,76 +261,164 @@
     margin-bottom:15px;
     font-size:14px;
 }
+@media(max-width:1200px){
+
+    .edit-profile-layout{
+
+        grid-template-columns:1fr;
+
+        max-width:850px;
+    }
+
+    .left-sidebar,
+    .right-sidebar{
+
+        display:none;
+    }
+}
+
+@media(max-width:768px){
+
+    .edit-card{
+
+        padding:25px;
+    }
+
+    .profile-pic{
+
+        width:120px !important;
+        height:120px !important;
+    }
+
+    .edit-card h2{
+
+        font-size:26px;
+    }
+}
 </style>
+    <div class="edit-profile-layout">
 
-<div class="edit-profile-container">
+    <aside class="left-sidebar">
 
-    <div class="edit-card">
+        <div class="sidebar-card">
 
-        <h2>Edit Profile</h2>
+            <h3>👤 Profile Settings</h3>
 
-        <!-- Avatar Preview -->
-        <div class="profile-pic" id="avatarPreview"
-            style="width:110px;
-                    height:110px;
-                    border-radius:50%;
-                    background:{{ user.avatar_color }};
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-size:40px;
-                    font-weight:bold;
-                    color:white;">
-
-            {{ user.get_initials }}
+            <p>
+                Personalize your EMORA profile and
+                choose how you appear to the community.
+            </p>
 
         </div>
-        {% if error %}
-        <div class="error-box">
-            {{ error }}
+
+        <div class="sidebar-card">
+
+            <h4>🎨 Avatar Tips</h4>
+
+            <p>
+                Pick a color that represents your mood
+                and personality.
+            </p>
+
         </div>
-        {% endif %}
 
-        <form method="POST">
-            {% csrf_token %}
+    </aside>
 
-            <!-- Username -->
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" value="{{ user.username }}">
+    <div class="edit-profile-container">
+
+        <div class="edit-card">
+
+            <h2>Edit Profile</h2>
+
+            <!-- Avatar Preview -->
+            <div class="profile-pic" id="avatarPreview"
+                style="width:110px;
+                        height:110px;
+                        border-radius:50%;
+                        background:{{ user.avatar_color }};
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:40px;
+                        font-weight:bold;
+                        color:white;">
+
+                {{ user.get_initials }}
+
             </div>
-
-            <!-- Bio -->
-            <div class="form-group">
-                <label>Bio</label>
-                <textarea name="bio">{{ user.bio }} </textarea>
+            {% if error %}
+            <div class="error-box">
+                {{ error }}
             </div>
+            {% endif %}
 
-            <!-- Avatar Color -->
-            <div class="form-group">
-                <label>Avatar Color</label>
+            <form method="POST">
+                {% csrf_token %}
 
-                <input type="hidden" name="avatar_color" id="avatarColor"
-                       value="{{ user.avatar_color }}">
-
-                <div class="color-picker">
-                    <div class="color-box" style="background:#4f46e5;" data-color="#4f46e5"></div>
-                    <div class="color-box" style="background:#ef4444;" data-color="#ef4444"></div>
-                    <div class="color-box" style="background:#10b981;" data-color="#10b981"></div>
-                    <div class="color-box" style="background:#f59e0b;" data-color="#f59e0b"></div>
-                    <div class="color-box" style="background:#a855f7;" data-color="#a855f7"></div>
+                <!-- Username -->
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" value="{{ user.username }}">
                 </div>
+
+                <!-- Bio -->
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea name="bio">{{ user.bio }} </textarea>
+                </div>
+
+                <!-- Avatar Color -->
+                <div class="form-group">
+                    <label>Avatar Color</label>
+
+                    <input type="hidden" name="avatar_color" id="avatarColor"
+                        value="{{ user.avatar_color }}">
+
+                    <div class="color-picker">
+                        <div class="color-box" style="background:#4f46e5;" data-color="#4f46e5"></div>
+                        <div class="color-box" style="background:#ef4444;" data-color="#ef4444"></div>
+                        <div class="color-box" style="background:#10b981;" data-color="#10b981"></div>
+                        <div class="color-box" style="background:#f59e0b;" data-color="#f59e0b"></div>
+                        <div class="color-box" style="background:#a855f7;" data-color="#a855f7"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
             </div>
 
-            <button type="submit" class="save-btn">
-                Save Changes
-            </button>
+    <aside class="right-sidebar">
 
-        </form>
+        <div class="sidebar-card">
+
+            <h4>🌿 EMORA Identity</h4>
+
+            <p>
+                Your profile helps others connect with
+                your stories, poems and quotes.
+            </p>
+
+        </div>
+
+        <div class="sidebar-card">
+
+            <h4>✨ Profile Preview</h4>
+
+            <p>
+                Changes will be reflected immediately
+                after saving.
+            </p>
+
+        </div>
+
+    </aside>
 
     </div>
-
-</div>
 
 <script>
 const boxes = document.querySelectorAll(".color-box");
